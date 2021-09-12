@@ -8,7 +8,8 @@ Svar: Navigatör. Navigatören granskar varje kodrad när den matas in och plane
 
 
 Uppgift 3 
-Indexinformationen för ett ord (det vill säga i vilka teckenpositioner ordet förekommer i den stora texten) kan bli mycket stor. Bör positionerna lagras som text eller binärt?
+Indexinformationen för ett ord (det vill säga i vilka teckenpositioner ordet förekommer i den stora texten) kan bli mycket stor. 
+Bör positionerna lagras som text eller binärt?
 
 
 Uppgift 4 
