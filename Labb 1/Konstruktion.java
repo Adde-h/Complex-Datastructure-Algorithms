@@ -47,21 +47,18 @@ public class Konstruktion {
 
     // Här testar vi vår kod
     
+    public static void seeker(RandomAccessFile indexFile, long pos)
+    {
+        
+    }
+
     public static void tester() throws FileNotFoundException 
     {
-
-    /*
-        3 fall
-        1. Om ordet är unikt
-        2. Om ordet är inte unikt
-        3. 
-    */
-
         // Int Pos --> Kolla TestDoc.txt. Kombinationen är ord - siffra - ord - siffra
         int pos = 0;
 
         // We make the testDoc as an object
-        File testFile = new File("TestDupletter.txt");
+        File testFile = new File("TestDoc.txt");
 
         // Scanner textReader is uesed to read the TestDoc.txt
         Scanner textReader = new Scanner(testFile);
@@ -99,19 +96,36 @@ public class Konstruktion {
                     case 0:
 
                         // Gets the word from the text
-                        String data = textReader.next();                      
+                        String data = textReader.next();           
                         
                         //Check if the word is unique
                         if(!(word.equals(data)))
                         {
+
+                            if(!(word.equals("")))
+                            {
+                                // We add space
+                                iWriter.write(spaceB);
+
+                                //Add frequency of the word (temp changed for readability)
+                                String s_Wordfreq = "" + wordfreq;
+                                iWriter.writeBytes(s_Wordfreq);
+
+                                //iWriter.write(wordfreq);
+                                
+                                wordfreq = 0;
+
+                                // New line
+                                iWriter.write(newLineB);
+
+                            }
+                            
                             // p_position is the byteIndex on file P, basically where we're currently
                             // writing to
                             long p_position = pWriter.getFilePointer();
 
-
                             // Updates the word variable, it checks the word behind.
                             word = data;
-                            wordfreq = 1;
                         
                             // Encodes the word from the text into a byte
                             byte[] bytes = data.getBytes(encoding);
@@ -122,12 +136,12 @@ public class Konstruktion {
                             // We add space
                             iWriter.write(spaceB);
                             
-                            // Now we add the position
-                            iWriter.writeLong(p_position);
+                            // Now we add the position (temp changed for readability)
+                            String sPos = "" + p_position;
+                            iWriter.writeBytes(sPos);
+
+                            // iWriter.writeLong(p_position);
                             
-                            // New line
-                            iWriter.write(newLineB);
-                          
                             pos++;
 
                         }
@@ -136,22 +150,6 @@ public class Konstruktion {
                         {
                             pos++;
 
-                            /*
-                            // We want the byte Index directly and not the word.
-                            data = textReader.next();
-                            
-                            // Encodes the ByteIndex from the text into a byte
-                            byte[] bytes = data.getBytes(encoding);
-                                                                        
-                            // We write the ByteIndex in L to P
-                            pWriter.write(bytes);
-
-                            // Here we create a new line
-                            pWriter.write(newLineB);
-
-                            //Counts the frequency of the word
-                            wordfreq++;
-                            */
                         }
 
                     break;
