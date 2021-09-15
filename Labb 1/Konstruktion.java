@@ -1,4 +1,5 @@
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,10 +38,11 @@ public class Konstruktion
     // Här testar vi vår kod
     public static void konstruktor() throws IOException 
     {
+        String encoding = "ISO-8859-1";
 
-        // textReader läser filen
-        BufferedReader textReader = new BufferedReader(new FileReader("TestDoc.txt"));
-
+        // textReader läser filen med encodning ISO-8859-1
+        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("TestDoc.txt"), encoding));
+        
         // Create files I and P index files
         File i_index = new File("TEST_I_index");
         FileOutputStream p_index= new FileOutputStream("TEST_BIN_P_Index");
@@ -72,18 +74,13 @@ public class Konstruktion
         // The byteIndex in Index L to Integer
         int binIndex;
 
-        String encoding = "ISO-8859-1";
 
         try 
         {
             // While textDoc adds a new word and that word isn't null
             while ((data = textReader.readLine()) != null) 
             {
-                //Converts from ISO-8859-1 to byteArray
-               // byte [] dataToBytes = data.getBytes(encoding);
-                
-                //Converts byteArray to ISO-8859-1?
-               // String decodeUTF = new String(dataToBytes, encoding);
+
                 String[] text_line = data.split(" ");
                 
                 // Index_Word stores the word in String. ByteIndex stores the byteIndex in Korpus file
