@@ -35,32 +35,70 @@ public class Konstruktion
      * 
      */
 
+     /*
+        Psuedokod för A 
+        ______________________
+        Special 1 -> Allra första ordet
+        Special 2 -> Samma ord
+        Special 3 -> om ordet är 'aa' men vi kollar 'a'
+        Special 4 ->  
+
+        Skapa intArray hashTable med 27000 ngt platser
+        Skapa a_word = ""
+        Därefter sätt a_word (3 första orden) till första ordet i Index I (Första fallet blir a__)
+        Hasha a_word och få ut hashvärdet -> hashval
+        Spara plats för pekare från Index I till I_pos
+        Läs nästa ord i Index I
+        Ifall nästa ord i Index I, dess 3 bokstäver != a_word
+            Skriv ut I_Pos till hashTable[hashval]
+        annars
+            forstätt med algorimten
+
+     */
+
     // Här testar vi vår kod
     public static void konstruktor() throws IOException 
     {
         String encoding = "ISO-8859-1";
 
         // textReader läser filen med encodning ISO-8859-1
-        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("TestDoc.txt"), encoding));
+        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("rawindex.txt"), encoding));
         
         // Create files I and P index files
-        File i_index = new File("TEST_I_index");
-        FileOutputStream p_index= new FileOutputStream("TEST_BIN_P_Index");
+        File i_index = new File("Index_I");
+        File a_index = new File("Index_A");
 
-        // Creating writers to I and P - index-files 
+        FileOutputStream p_index= new FileOutputStream("Index_P");
+
+        // Creating writers to I, P and A - index-files 
         FileWriter i_Writer = new FileWriter(i_index);
+        FileWriter a_writer = new FileWriter(a_index);
+
+        BufferedWriter aWriter = new BufferedWriter(a_writer);
         BufferedWriter iWriter = new BufferedWriter(i_Writer);   
         DataOutputStream pWriter = new DataOutputStream(new BufferedOutputStream(p_index));
 
+        //Hashtable
+        int maxHashVal = 30*900 + 30*30 + 30;
+        int[] hashTable = new int[maxHashVal + 1];
+
         // Temp variable that stores the word previous and then compares it to see if the word is unique or not.
         String word = "";
-
+        
+        // Temp variable that stores 3 alfabet combo and then compares with the new distint word
+        String a_word = "";
+        String a_check_word = " ";
+        
         // Counts the frequencies of the word
         int wordfreq = 0;
 
         // The byte position of P, where in P we are writing to 
-        long p_position = 0L;
-        int byteCounter = 0;
+        int p_position = 0;
+        int p_byteCounter = 0;
+
+        // The byte position of I, where in I we are writing to 
+        int i_position = 0;
+        int i_byteCounter = 0;
 
         // Space in byte
         String space = " ";
@@ -74,13 +112,14 @@ public class Konstruktion
         // The byteIndex in Index L to Integer
         int binIndex;
 
+        int hashval;
 
         try 
         {
             // While textDoc adds a new word and that word isn't null
             while ((data = textReader.readLine()) != null) 
             {
-
+                // Splits line into 2 words
                 String[] text_line = data.split(" ");
                 
                 // Index_Word stores the word in String. ByteIndex stores the byteIndex in Korpus file
@@ -89,6 +128,24 @@ public class Konstruktion
 
                 // byteIndex converted from String to Int and stored in binIndex
                 binIndex = Integer.parseInt(byteIndex);
+
+                // Takes first 3 letters of the word writing to I
+                if(index_Word.length() < 3)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(index_Word);
+                    int length = index_Word.length();
+                    for(int i = 3 - length; i <= 3; i++)
+                    {
+                        sb.append(" ");
+                    }
+
+                    a_word = sb.toString();
+                }
+                else
+                {
+                    a_word = index_Word.substring(0, 3);
+                }
 
                 // If the word is Distinkt
                 if (!(word.equals(index_Word))) 
@@ -110,19 +167,70 @@ public class Konstruktion
 
                         // New line
                         iWriter.write(newLine);
+
+                        // Update I_byte Counter
+                        i_byteCounter += s_Wordfreq.length() + 1;
                     }
+                    
+                    // if a_word doesn't match check_word. add it to A_list array and file
+                    if(!(a_check_word.equals(a_word)))
+                        {
+                            
+                            //Get HashVlue and insert it to Hashtable
+                            hashval = hasher(a_word);
+                            hashTable[hashval] = i_position;
+                        
+                            StringBuilder build_a = new StringBuilder();
+
+                            // Handles special case first time running the constructor
+                            if(!(a_check_word.equals("")))
+                            {
+                                i_position = i_byteCounter;
+                            }
+
+                            build_a.append(hashval);
+                            build_a.append(space);
+                            build_a.append(i_position);
+                            build_a.append(newLine);
+                            
+
+                            // Now writing to A
+                            aWriter.write(build_a.toString());
+
+                            //Update a_check_word
+                            a_check_word = a_word;
+                            
+                        }
 
                     // Updates the word variable, it checks the word behind.
                     word = index_Word;
-
+                    
+                    // Takes first 3 letters of the word writing to I
+                    if(index_Word.length() < 3)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(index_Word);
+                        int length = index_Word.length();
+                        for(int i = 3 - length; i <= 3; i++)
+                        {
+                            sb.append(" ");
+                        }
+    
+                        a_word = sb.toString();
+                    }
+                    else
+                    {
+                        a_word = index_Word.substring(0, 3);
+                    }
+                    
                     // Here we write the word to file I
                     iWriter.write(index_Word);
 
                     // We add space
                     iWriter.write(space);
 
-                    // Sets p_position to bytecounter before writing it out
-                    p_position = byteCounter;
+                    // Sets p_position to p_bytecounter before writing it out
+                    p_position = p_byteCounter;
 
                     // Now we add the position
                     String sPos = "" + p_position;
@@ -130,10 +238,12 @@ public class Konstruktion
 
                     // We write the ByteIndex in L to P
                     pWriter.writeByte(binIndex);
-                    byteCounter++;
+                    p_byteCounter++;
 
                     // Increments the frequency of the word
                     wordfreq++;
+
+                    i_byteCounter += index_Word.length() + 1 + sPos.length() + 1;
 
                 }
                 // If the word is not unique
@@ -141,7 +251,7 @@ public class Konstruktion
                 {
                     // We write the ByteIndex in L to P
                     pWriter.writeByte(binIndex);
-                    byteCounter++;
+                    p_byteCounter++;
 
                     // Counts the frequency of the word
                     wordfreq++;
@@ -156,11 +266,12 @@ public class Konstruktion
                 // Add frequency of the previous word
                 String s_Wordfreq = "" + wordfreq;
                 iWriter.write(s_Wordfreq);
+
             }
             // Close the writers 
             iWriter.close();
             pWriter.close();
-
+            aWriter.close();
         } 
         catch (IOException e) 
         {
@@ -171,8 +282,88 @@ public class Konstruktion
         textReader.close();
     }
 
+    public static int hasher(String tre_alfabetCombo)
+    {
+        char[] toHash;
+        toHash = tre_alfabetCombo.toCharArray();
+        int letter1 = toHash[0];
+        int letter2 = toHash[1];
+        int letter3 = toHash[2];
+
+        //ASCII mellan a-z
+        if (letter1 > 96 && letter1 < 123)
+        {
+            letter1 = letter1- 96;
+        }
+        else if (letter1 == 229) // Letter å
+        {
+            letter1 = 28;
+        }
+        else if (letter1 == 228) // Letter ä
+        {
+            letter1 = 29;
+        }
+        else if (letter1 == 246) // Letter ö
+        {
+            letter1 = 30;
+        }
+        else if (letter1 == 32) // Space
+        {
+            letter1 = 0;
+        }
+
+        //ASCII mellan a-z
+        if (letter2 > 96 && letter2 < 123)
+        {
+            letter2 = letter2- 96;
+        }
+        else if (letter2 == 229) // Letter å
+        {
+            letter2 = 28;
+        }
+        else if (letter2 == 228) // Letter ä
+        {
+            letter2 = 29;
+        }
+        else if (letter2 == 246) // Letter ö
+        {
+            letter2 = 30;
+        }
+        else if (letter2 == 32) // Space
+        {
+            letter2 = 0;
+        }
+
+        //ASCII mellan a-z
+        if (letter3 > 96 && letter3 < 123)
+        {
+            letter3 = letter3- 96;
+        }
+        else if (letter3 == 229) // Letter å
+        {
+            letter3 = 28;
+        }
+        else if (letter3 == 228) // Letter ä
+        {
+            letter3 = 29;
+        }
+        else if (letter3 == 246) // Letter ö
+        {
+            letter3 = 30;
+        }
+        else if (letter3 == 32) // Space
+        {
+            letter3 = 0;
+        }
+
+        int hashval = (letter1 * 900) + (letter2 * 30) + letter3;
+
+        return hashval;
+    }
+
     public static void main(String[] args) throws IOException 
     {
-        konstruktor();
+        konstruktor();        
+        
     }
 }
