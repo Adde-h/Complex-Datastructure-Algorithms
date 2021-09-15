@@ -1,4 +1,5 @@
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.File;
@@ -8,12 +9,14 @@ import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /*
     Rakin Ali CINTE19, KTH
     Adeel Hussain CINTE19, KTH
     Påbörjad 2021-09-11
 */
+
 
 public class Konstruktion 
 {
@@ -56,31 +59,56 @@ public class Konstruktion
 
      */
 
-    // Här testar vi vår kod
-    public static void konstruktor() throws IOException 
+
+    public static void find(String findWord, int[] hashTable)
+    {
+        try
+        {
+            RandomAccessFile raf_I = new RandomAccessFile("Index_I", "r");
+            RandomAccessFile raf_P = new RandomAccessFile("Index_P", "r");
+
+            //Pull the 3 letters out then get the hash value
+            String seekLetters = findWord.substring(0,3);
+            int hashVal = hasher(seekLetters);
+           
+            byte[] byteArr = new byte[64];
+            long look_I = hashTable[hashVal];
+            raf_I.seek(look_I);
+            
+            raf_I.readFully(byteArr, 0, 20);
+            String print = new String(byteArr,"ISO-8859-1");
+            System.out.println(print);
+
+            raf_I.close();
+            raf_P.close();
+
+        }
+        catch (IOException e) 
+        {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
+
+    // Här körs konstruktionsprogrammet
+    public static int[] konstruktor() throws IOException 
     {
         String encoding = "ISO-8859-1";
 
         // textReader läser filen med encodning ISO-8859-1
-        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("rawindex.txt"), encoding));
+        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("ISO-8859-1.txt"), encoding));
         
-        // Create files I and P index files
-        File i_index = new File("Index_I");
+        // Create Index I, A and P files
         File a_index = new File("Index_A");
-
         FileOutputStream p_index= new FileOutputStream("Index_P");
+        FileOutputStream i_index= new FileOutputStream("Index_I");
 
         // Creating writers to I, P and A - index-files 
-        FileWriter i_Writer = new FileWriter(i_index);
-        FileWriter a_writer = new FileWriter(a_index);
-
-        BufferedWriter aWriter = new BufferedWriter(a_writer);
-        BufferedWriter iWriter = new BufferedWriter(i_Writer);   
+        BufferedWriter aWriter = new BufferedWriter(new FileWriter(a_index));
         DataOutputStream pWriter = new DataOutputStream(new BufferedOutputStream(p_index));
+        OutputStreamWriter iWriter = new OutputStreamWriter(new BufferedOutputStream(i_index), encoding);
 
-        //Hashtable
-        int maxHashVal = 30*900 + 30*30 + 30;
-        int[] hashTable = new int[maxHashVal + 1];
 
         // Temp variable that stores the word previous and then compares it to see if the word is unique or not.
         String word = "";
@@ -113,6 +141,10 @@ public class Konstruktion
         int binIndex;
 
         int hashval;
+
+        int maxHashVal = 30*900 + 30*30 + 30;
+        int[] hashTable = new int[maxHashVal + 1];
+
 
         try 
         {
@@ -176,7 +208,7 @@ public class Konstruktion
                     if(!(a_check_word.equals(a_word)))
                         {
                             
-                            //Get HashVlue and insert it to Hashtable
+                            //Get HashValue and insert it to Hashtable
                             hashval = hasher(a_word);
                             hashTable[hashval] = i_position;
                         
@@ -192,14 +224,11 @@ public class Konstruktion
                             build_a.append(space);
                             build_a.append(i_position);
                             build_a.append(newLine);
-                            
-
                             // Now writing to A
                             aWriter.write(build_a.toString());
 
                             //Update a_check_word
                             a_check_word = a_word;
-                            
                         }
 
                     // Updates the word variable, it checks the word behind.
@@ -277,9 +306,11 @@ public class Konstruktion
         {
             System.out.println("An error occurred.");
             e.printStackTrace();
-        }
-
+        }    
         textReader.close();
+
+        return hashTable;
+        
     }
 
     public static int hasher(String tre_alfabetCombo)
@@ -363,7 +394,8 @@ public class Konstruktion
 
     public static void main(String[] args) throws IOException 
     {
-        konstruktor();        
-        
+        int[] hashTable =  konstruktor();    
+        String findWord = "öööö";
+        find(findWord, hashTable);
     }
 }
