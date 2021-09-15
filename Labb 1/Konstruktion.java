@@ -1,32 +1,21 @@
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.io.IOException; // Import the IOException class to handle errors
-import java.io.RandomAccessFile; // Import the RandomAccessFile
+import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+
 /*
     Rakin Ali CINTE19, KTH
     Adeel Hussain CINTE19, KTH
-    Påbörjad 2021-09-12
+    Påbörjad 2021-09-11
 */
 
-public class Konstruktion {
-
-    // https://stackabuse.com/java-save-write-string-into-a-file/
-
-    // File i_file = new File("I_index");
-    // File p_file = new File("P_index");
-
-    // This is the I index, where we store every distinct word
-    // RandomAccessFile i_index = new RandomAccessFile (i_file, "rw");
-
-    // This is the file where all the pointers shall be stored in
-    // RandomAccessFile p_index = new RandomAccessFile(p_file, "rw");
-
-    // This object reads the sorted file Temp L then places them.
-    Scanner textReader; // = new File(tempL filen)
-
-    // This object place
-
+public class Konstruktion 
+{
     /**
      * __________ psuedo koden_______________
      * 
@@ -46,139 +35,132 @@ public class Konstruktion {
      */
 
     // Här testar vi vår kod
-    
-    public static void seeker(RandomAccessFile indexFile, long pos)
+    public static void konstruktor() throws IOException 
     {
-        
-    }
 
-    public static void tester() throws FileNotFoundException 
-    {
-        // Int Pos --> Kolla TestDoc.txt. Kombinationen är ord - siffra - ord - siffra
-        int pos = 0;
+        // textReader läser filen
+        BufferedReader textReader = new BufferedReader(new FileReader("TestDoc.txt"));
 
-        // We make the testDoc as an object
-        File testFile = new File("TestDoc.txt");
+        // Create files I and P index files
+        File i_index = new File("TEST_I_index");
+        FileOutputStream p_index= new FileOutputStream("TEST_BIN_P_Index");
 
-        // Scanner textReader is uesed to read the TestDoc.txt
-        Scanner textReader = new Scanner(testFile);
+        // Creating writers to I and P - index-files 
+        FileWriter i_Writer = new FileWriter(i_index);
+        BufferedWriter iWriter = new BufferedWriter(i_Writer);   
+        DataOutputStream pWriter = new DataOutputStream(new BufferedOutputStream(p_index));
 
-        // Theis are the files where we create the I and P files.
-        RandomAccessFile iWriter = new RandomAccessFile("Test_RAF_I_Index", "rw");
-        RandomAccessFile pWriter = new RandomAccessFile("Test_RAF_P_Index", "rw");
-
-        // Temp variable that stores the word
+        // Temp variable that stores the word previous and then compares it to see if the word is unique or not.
         String word = "";
 
         // Counts the frequencies of the word
         int wordfreq = 0;
+
+        // The byte position of P, where in P we are writing to 
+        long p_position = 0L;
+        int byteCounter = 0;
+
+        // Space in byte
+        String space = " ";
+
+        // New line in bytes
+        String newLine = "\n";
         
-        try {
-            
-            // String encoding = "ISO-8859-1";
-            String encoding = "UTF-8";
+        // Where we store the word read from textReader
+        String data;
+        
+        // The byteIndex in Index L to Integer
+        int binIndex;
 
-            // Space in byte
-            String space = " ";
-            byte[] spaceB = space.getBytes(encoding);
+        String encoding = "ISO-8859-1";
 
-            // New line in bytes
-            String newLine = "\n";
-            byte[] newLineB = newLine.getBytes(encoding);
-            
-            // While textDoc has a new word
-            while (textReader.hasNextLine()) 
+        try 
+        {
+            // While textDoc adds a new word and that word isn't null
+            while ((data = textReader.readLine()) != null) 
             {
+                //Converts from ISO-8859-1 to byteArray
+               // byte [] dataToBytes = data.getBytes(encoding);
+                
+                //Converts byteArray to ISO-8859-1?
+               // String decodeUTF = new String(dataToBytes, encoding);
+                String[] text_line = data.split(" ");
+                
+                // Index_Word stores the word in String. ByteIndex stores the byteIndex in Korpus file
+                String index_Word = text_line[0];
+                String byteIndex = text_line[1];
 
-                switch(pos % 2)
+                // byteIndex converted from String to Int and stored in binIndex
+                binIndex = Integer.parseInt(byteIndex);
+
+                // If the word is Distinkt
+                if (!(word.equals(index_Word))) 
                 {
-                    //Checks is we are bringing in a word
-                    case 0:
+                    // and not the first word of the text, we have to add wordfreq to the previous word then continue with the algo
+                    if (!(word.equals(""))) 
+                    {
+                        // We add space
+                        iWriter.write(space);
 
-                        // Gets the word from the text
-                        String data = textReader.next();           
-                        
-                        //Check if the word is unique
-                        if(!(word.equals(data)))
-                        {
+                        // Add frequency of the previous word (temp changed for readability)
+                        String s_Wordfreq = "" + wordfreq;
+      
+                        // Writing to I index
+                        iWriter.write(s_Wordfreq);
 
-                            if(!(word.equals("")))
-                            {
-                                // We add space
-                                iWriter.write(spaceB);
+                        // Reset the wordfreq
+                        wordfreq = 0;
 
-                                //Add frequency of the word (temp changed for readability)
-                                String s_Wordfreq = "" + wordfreq;
-                                iWriter.writeBytes(s_Wordfreq);
+                        // New line
+                        iWriter.write(newLine);
+                    }
 
-                                //iWriter.write(wordfreq);
-                                
-                                wordfreq = 0;
+                    // Updates the word variable, it checks the word behind.
+                    word = index_Word;
 
-                                // New line
-                                iWriter.write(newLineB);
+                    // Here we write the word to file I
+                    iWriter.write(index_Word);
 
-                            }
-                            
-                            // p_position is the byteIndex on file P, basically where we're currently
-                            // writing to
-                            long p_position = pWriter.getFilePointer();
+                    // We add space
+                    iWriter.write(space);
 
-                            // Updates the word variable, it checks the word behind.
-                            word = data;
-                        
-                            // Encodes the word from the text into a byte
-                            byte[] bytes = data.getBytes(encoding);
-                        
-                            // Here we write the word to file I
-                            iWriter.write(bytes);
-                            
-                            // We add space
-                            iWriter.write(spaceB);
-                            
-                            // Now we add the position (temp changed for readability)
-                            String sPos = "" + p_position;
-                            iWriter.writeBytes(sPos);
+                    // Sets p_position to bytecounter before writing it out
+                    p_position = byteCounter;
 
-                            // iWriter.writeLong(p_position);
-                            
-                            pos++;
+                    // Now we add the position
+                    String sPos = "" + p_position;
+                    iWriter.write(sPos);
 
-                        }
-                        // If the word is not unique
-                        else
-                        {
-                            pos++;
+                    // We write the ByteIndex in L to P
+                    pWriter.writeByte(binIndex);
+                    byteCounter++;
 
-                        }
+                    // Increments the frequency of the word
+                    wordfreq++;
 
-                    break;
+                }
+                // If the word is not unique
+                else 
+                {
+                    // We write the ByteIndex in L to P
+                    pWriter.writeByte(binIndex);
+                    byteCounter++;
 
-                    // If it is a byteIndex
-                    case 1: 
-                            
-                        // We want the byte Index directly and not the word.
-                        data = textReader.next();    
-                        
-                        // Encodes the ByteIndex from the text into a byte
-                        byte[] bytes = data.getBytes(encoding);
-                                                                    
-                        // We write the ByteIndex in L to P
-                        pWriter.write(bytes);
-
-                        // Here we create a new line
-                        pWriter.write(newLineB);
-
-                        //Counts the frequency of the word
-                        wordfreq++;
-
-                        //
-                        pos++;
-                        
-                    break;
+                    // Counts the frequency of the word
+                    wordfreq++;
                 }
             }
+            // Special case. WordFreq on the last word will not be written. We can fix this by adding it manually
+            if ((data = textReader.readLine()) == null) 
+            {
+                // We add space
+                iWriter.write(space);
 
+                // Add frequency of the previous word
+                String s_Wordfreq = "" + wordfreq;
+                iWriter.write(s_Wordfreq);
+            }
+            // Close the writers 
             iWriter.close();
             pWriter.close();
 
@@ -192,9 +174,8 @@ public class Konstruktion {
         textReader.close();
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-
-        tester();
-
+    public static void main(String[] args) throws IOException 
+    {
+        konstruktor();
     }
 }
