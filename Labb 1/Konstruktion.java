@@ -1,12 +1,12 @@
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.File;
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.IOException; // Import the IOException class to handle errors
-import java.io.RandomAccessFile; // Import the RandomAccessFile
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 
 /*
     Rakin Ali CINTE19, KTH
@@ -34,44 +34,23 @@ public class Konstruktion
      * 
      */
 
-    public static void seeker(RandomAccessFile indexFile, long pos) 
-    {
-
-    }
-
     // Här testar vi vår kod
-    public static void tester() throws IOException 
+    public static void konstruktor() throws IOException 
     {
 
         // textReader läser filen
-        BufferedReader textReader = new BufferedReader(new FileReader("TestRawIndex.txt"));
+        BufferedReader textReader = new BufferedReader(new FileReader("TestDoc.txt"));
 
-        // These are the files where we create the I and P files.
-       // BufferedWriter 
-
-
-        // final byte [] isoByte = String.getByte("ISO-8859-1")
-
-        // isoByte.length
-
+        // Create files I and P index files
         File i_index = new File("TEST_I_index");
-        //File p_index = new File("TEST_P_index");
+        FileOutputStream p_index= new FileOutputStream("TEST_BIN_P_Index");
 
-        /* RADERA INTE -> VIKTIGA KOMMENTARER
-        RandomAccessFile iWriter = new RandomAccessFile("Test_RAF_I_Index", "rw");
-        RandomAccessFile pWriter = new RandomAccessFile("Test_RAF_P_Index", "rw");
-        */
-
-        BufferedWriter iWriter = null;
+        // Creating writers to I and P - index-files 
         FileWriter i_Writer = new FileWriter(i_index);
-        iWriter = new BufferedWriter(i_Writer);
+        BufferedWriter iWriter = new BufferedWriter(i_Writer);   
+        DataOutputStream pWriter = new DataOutputStream(new BufferedOutputStream(p_index));
 
-        // Creating binary file
-        FileOutputStream fout=new FileOutputStream("TEST_BIN_P_Index.dat");
-        DataOutputStream pWriter =new DataOutputStream(fout);
-
-        // Temp variable that stores the word previous and then compares it to see if
-        // the word is unique or not.
+        // Temp variable that stores the word previous and then compares it to see if the word is unique or not.
         String word = "";
 
         // Counts the frequencies of the word
@@ -80,56 +59,53 @@ public class Konstruktion
         // The byte position of P, where in P we are writing to 
         long p_position = 0L;
         int byteCounter = 0;
-        // The byte position of I, where in I_index we are writing to 
-       // long i_position = 0L;
+
+        // Space in byte
+        String space = " ";
+
+        // New line in bytes
+        String newLine = "\n";
+        
+        // Where we store the word read from textReader
+        String data;
+        
+        // The byteIndex in Index L to Integer
+        int binIndex;
+
+        String encoding = "ISO-8859-1";
 
         try 
         {
-            String encoding = "ISO-8859-1";
-            
-            // Space in byte
-            String space = " ";
-            byte[] spaceB = space.getBytes(encoding);
-            int space_toBytesLength = spaceB.length;
-
-            // New line in bytes
-            String newLine = "\n";
-            int newLineLength = newLine.getBytes().length;
-            byte[] newLineB = newLine.getBytes(encoding);
-            String data;
-            int binIndex;
-
-            // While textDoc has a new word and that word isn't null
+            // While textDoc adds a new word and that word isn't null
             while ((data = textReader.readLine()) != null) 
             {
-
+                //Converts from ISO-8859-1 to byteArray
+               // byte [] dataToBytes = data.getBytes(encoding);
+                
+                //Converts byteArray to ISO-8859-1?
+               // String decodeUTF = new String(dataToBytes, encoding);
                 String[] text_line = data.split(" ");
-                String index_Word;
-                String byteIndex;
+                
+                // Index_Word stores the word in String. ByteIndex stores the byteIndex in Korpus file
+                String index_Word = text_line[0];
+                String byteIndex = text_line[1];
 
-                // The word from the text
-                index_Word = text_line[0];
-
-                // The byte index from the text
-                byteIndex = text_line[1];
+                // byteIndex converted from String to Int and stored in binIndex
                 binIndex = Integer.parseInt(byteIndex);
 
                 // If the word is Distinkt
                 if (!(word.equals(index_Word))) 
                 {
-                    // and not the first word of the text
+                    // and not the first word of the text, we have to add wordfreq to the previous word then continue with the algo
                     if (!(word.equals(""))) 
                     {
                         // We add space
                         iWriter.write(space);
-                        //i_position += space_toBytesLength;
 
                         // Add frequency of the previous word (temp changed for readability)
                         String s_Wordfreq = "" + wordfreq;
       
-                        //Writing to I index
-                        int s_WordfreqLength = s_Wordfreq.getBytes().length;
-                       // i_position += s_WordfreqLength;
+                        // Writing to I index
                         iWriter.write(s_Wordfreq);
 
                         // Reset the wordfreq
@@ -137,36 +113,29 @@ public class Konstruktion
 
                         // New line
                         iWriter.write(newLine);
-                       // i_position += newLineLength;
                     }
 
                     // Updates the word variable, it checks the word behind.
                     word = index_Word;
 
                     // Here we write the word to file I
-                    //i_position += index_Word.getBytes().length;
                     iWriter.write(index_Word);
 
                     // We add space
                     iWriter.write(space);
-                    //i_position += space_toBytesLength;
 
+                    // Sets p_position to bytecounter before writing it out
                     p_position = byteCounter;
 
-                    // Now we add the position (temp changed for readability)
+                    // Now we add the position
                     String sPos = "" + p_position;
-                   // i_position += sPos.getBytes().length;
                     iWriter.write(sPos);
 
-
                     // We write the ByteIndex in L to P
-                    pWriter.writeInt(binIndex);
+                    pWriter.writeByte(binIndex);
                     byteCounter++;
 
-                    // Here we create a new line
-                    //pWriter.write(newLineB);
-
-                    // Counts the frequency of the word
+                    // Increments the frequency of the word
                     wordfreq++;
 
                 }
@@ -174,7 +143,7 @@ public class Konstruktion
                 else 
                 {
                     // We write the ByteIndex in L to P
-                    pWriter.writeInt(binIndex);
+                    pWriter.writeByte(binIndex);
                     byteCounter++;
 
                     // Counts the frequency of the word
@@ -186,18 +155,17 @@ public class Konstruktion
             {
                 // We add space
                 iWriter.write(space);
-               // i_position += space_toBytesLength;
 
-                // Add frequency of the previous word (temp changed for readability)
+                // Add frequency of the previous word
                 String s_Wordfreq = "" + wordfreq;
-               // i_position += s_Wordfreq.getBytes().length;
                 iWriter.write(s_Wordfreq);
             }
-
+            // Close the writers 
             iWriter.close();
             pWriter.close();
 
-        } catch (IOException e) 
+        } 
+        catch (IOException e) 
         {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -208,6 +176,6 @@ public class Konstruktion
 
     public static void main(String[] args) throws IOException 
     {
-        tester();
+        konstruktor();
     }
 }
