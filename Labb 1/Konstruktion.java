@@ -64,23 +64,49 @@ public class Konstruktion
     {
         try
         {
+            // Access the files
             RandomAccessFile raf_I = new RandomAccessFile("Index_I", "r");
             RandomAccessFile raf_P = new RandomAccessFile("Index_P", "r");
+
+            // To find the appropiate byte Size
+            int wordLength = findWord.length();
 
             //Pull the 3 letters out then get the hash value
             String seekLetters = findWord.substring(0,3);
             int hashVal = hasher(seekLetters);
            
-            byte[] byteArr = new byte[64];
+           // Go to I and look for the word 
+            byte[] byteArr = new byte[wordLength];
             long look_I = hashTable[hashVal];
             raf_I.seek(look_I);
+            System.out.println("Position in I : " + look_I);
             
-            raf_I.readFully(byteArr, 0, 20);
-            String print = new String(byteArr,"ISO-8859-1");
-            System.out.println(print);
+            /* Binary search delen 
+
+            */
+
+            // Word found! -> Reads the word and puts in the byte array. Print out later
+            raf_I.readFully(byteArr, 0, wordLength);
+            String wordFound = new String(byteArr,"ISO-8859-1");
+            System.out.println("The word found: " + wordFound);
+
+            // Extract information 
+            raf_I.skipBytes(1);
+            int posOfP = raf_I.read();
+            System.out.println("PosFound: " + posOfP);
+            
+            raf_I.skipBytes(1);
+            int freqOfWord = raf_I.read();
+            System.out.println("FreqOfTheWord: " + freqOfWord);
+
+            raf_P.seek(posOfP);
+            int whereInL = raf_P.read();
+            System.out.println("WhereInIndexL: " + whereInL);
 
             raf_I.close();
             raf_P.close();
+            
+            // print array function
 
         }
         catch (IOException e) 
@@ -207,6 +233,12 @@ public class Konstruktion
                     // if a_word doesn't match check_word. add it to A_list array and file
                     if(!(a_check_word.equals(a_word)))
                         {
+
+                            // Handles special case first time running the constructor
+                            if(!(a_check_word.equals("")))
+                            {
+                                i_position = i_byteCounter;
+                            }
                             
                             //Get HashValue and insert it to Hashtable
                             hashval = hasher(a_word);
@@ -214,11 +246,7 @@ public class Konstruktion
                         
                             StringBuilder build_a = new StringBuilder();
 
-                            // Handles special case first time running the constructor
-                            if(!(a_check_word.equals("")))
-                            {
-                                i_position = i_byteCounter;
-                            }
+
 
                             build_a.append(hashval);
                             build_a.append(space);
@@ -262,8 +290,9 @@ public class Konstruktion
                     p_position = p_byteCounter;
 
                     // Now we add the position
-                    String sPos = "" + p_position;
-                    iWriter.write(sPos);
+                    //String sPos = "" + p_position;
+                    //iWriter.write(sPos);
+                    iWriter.write(p_position);
 
                     // We write the ByteIndex in L to P
                     pWriter.writeByte(binIndex);
@@ -272,7 +301,8 @@ public class Konstruktion
                     // Increments the frequency of the word
                     wordfreq++;
 
-                    i_byteCounter += index_Word.length() + 1 + sPos.length() + 1;
+                    //i_byteCounter += index_Word.length() + 1 + sPos.length() + 1;
+                    i_byteCounter += index_Word.length() + 1 + p_position + 1;
 
                 }
                 // If the word is not unique
@@ -293,8 +323,9 @@ public class Konstruktion
                 iWriter.write(space);
 
                 // Add frequency of the previous word
-                String s_Wordfreq = "" + wordfreq;
-                iWriter.write(s_Wordfreq);
+                //String s_Wordfreq = "" + wordfreq;
+                //iWriter.write(s_Wordfreq);
+                iWriter.write(wordfreq);
 
             }
             // Close the writers 
@@ -395,7 +426,7 @@ public class Konstruktion
     public static void main(String[] args) throws IOException 
     {
         int[] hashTable =  konstruktor();    
-        String findWord = "öööö";
+        String findWord = "özgur";
         find(findWord, hashTable);
     }
 }
