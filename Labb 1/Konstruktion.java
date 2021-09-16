@@ -1,5 +1,6 @@
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.File;
@@ -58,17 +59,7 @@ public class Konstruktion
 
      */
 
-    public static void runProgram(String input, int[] hashTable)
-    {
-        switch(input)
-        {
-            case k:
-            
-            
-            break; 
-        }
-        find(input, hashTable);
-    }
+
 
     //Compare word lengths 
      public static long Iterate(String word_lookUP, int startPos, int lastPos, RandomAccessFile i_index) throws IOException
@@ -514,10 +505,31 @@ public class Konstruktion
         return hashval;
     }
 
+
+    /*
+                            TODO
+
+        -Konstruktorfilen ska endast köras 1 gång (börja läsa från fil A)
+        -Edge cases för första och sista orden är ej fixade
+        -Små och stora bokstäver ska ej skiljas när vi söker ord
+        -Newline ska ersättas med space vi utskrift av ord
+        -Vi ska skriva ut 25 rader av förekomster
+        -Ifall mer än 25 rader fråga användaren
+        -Sökningar och utskriften sker under 1 sekund ifall förekomster < 25
+
+    */
+
     public static void main(String[] args) throws IOException 
     {
-        int[] hashTable =  konstruktor();    
-        String findWord = "atellanus";
-        find(findWord, hashTable);
+
+        String findWord = args[0];
+        // //Timer
+        int[] hashTable = konstruktor();
+        
+        if(args != null)
+        {
+            find(findWord, hashTable);
+        }
+
     }
 }
