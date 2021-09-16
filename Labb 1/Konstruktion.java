@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 /*
     Rakin Ali CINTE19, KTH
@@ -59,6 +58,27 @@ public class Konstruktion
 
      */
 
+     public static int BinarySearch(String word_lookUP, int smallKey, int largeKey, RandomAccessFile i_index) throws IOException
+     {
+        // Compare word_LookUp with middle element
+        // If X == middle element then return the index value
+        // If X> middle emenet then BS to middle-largeKey
+        // If X<Middle then BS to smallKey<- middle
+
+        // Look in the middle
+        int middle_key = (smallKey + largeKey)/2;
+        i_index.seek(middle_key);
+
+        // Take out the word in the middle
+        byte[] middlekey = new byte[64];
+        //String wordRead = i_index.read();
+        //System.out.println("Word in middle is ->: " + wordRead);
+
+        // Compare middle key
+            
+        return 0;
+     }
+
 
     public static void find(String findWord, int[] hashTable)
     {
@@ -67,46 +87,65 @@ public class Konstruktion
             // Access the files
             RandomAccessFile raf_I = new RandomAccessFile("Index_I", "r");
             RandomAccessFile raf_P = new RandomAccessFile("Index_P", "r");
-
-            // To find the appropiate byte Size
-            int wordLength = findWord.length();
+            RandomAccessFile raf_L = new RandomAccessFile("korpus", "r");
 
             //Pull the 3 letters out then get the hash value
             String seekLetters = findWord.substring(0,3);
             int hashVal = hasher(seekLetters);
            
-           // Go to I and look for the word 
-            byte[] byteArr = new byte[wordLength];
+           // Go to I and get the word length 
             long look_I = hashTable[hashVal];
             raf_I.seek(look_I);
-            System.out.println("Position in I : " + look_I);
+            int lengthOfWord = raf_I.read();
+            System.out.println("Where in I to look for word being searched : " + look_I);
+            System.out.println("Length of word were seeking is: " + lengthOfWord);
             
             /* Binary search delen 
+
+
 
             */
 
             // Word found! -> Reads the word and puts in the byte array. Print out later
-            raf_I.readFully(byteArr, 0, wordLength);
-            String wordFound = new String(byteArr,"ISO-8859-1");
-            System.out.println("The word found: " + wordFound);
+            byte[] wordFromI = new byte[lengthOfWord];
+            raf_I.readFully(wordFromI, 0, lengthOfWord);
+            String wordFound = new String(wordFromI,"ISO-8859-1");
+
+            System.out.println("The word we are searching for is found! : " + wordFound);
 
             // Extract information 
-            raf_I.skipBytes(1);
-            int posOfP = raf_I.read();
-            System.out.println("PosFound: " + posOfP);
+            int posOfP = raf_I.readInt();
+            System.out.println("Where in P we are looking for: " + posOfP);
             
-            raf_I.skipBytes(1);
-            int freqOfWord = raf_I.read();
+            int freqOfWord = raf_I.readInt();
             System.out.println("FreqOfTheWord: " + freqOfWord);
 
             raf_P.seek(posOfP);
-            int whereInL = raf_P.read();
-            System.out.println("WhereInIndexL: " + whereInL);
+            int whereInL = raf_P.readInt();
+            System.out.println("Where In Index L Word occurs: " + whereInL);
 
+            byte[] scentenceFromL = new byte[60 + lengthOfWord];
+
+            if(whereInL < 30)
+            {
+
+            }
+            else
+            {
+                raf_L.seek(whereInL-30);
+                //raf_L.seek(whereInL);
+                raf_L.readFully(scentenceFromL, 0, 60 + lengthOfWord);
+                //raf_L.readFully(scentenceFromL, 0, 30);
+            }
+
+            
+            String scentenceFound = new String(scentenceFromL,"ISO-8859-1");
+            System.out.println("The scentence we are seaching for is found! : " + scentenceFound);
+            
             raf_I.close();
             raf_P.close();
+            raf_L.close();
             
-            // print array function
 
         }
         catch (IOException e) 
@@ -121,9 +160,10 @@ public class Konstruktion
     public static int[] konstruktor() throws IOException 
     {
         String encoding = "ISO-8859-1";
+        String fileToRead = "testFile123.txt";
 
         // textReader läser filen med encodning ISO-8859-1
-        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream("ISO-8859-1.txt"), encoding));
+        BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToRead), encoding));
         
         // Create Index I, A and P files
         File a_index = new File("Index_A");
@@ -131,10 +171,10 @@ public class Konstruktion
         FileOutputStream i_index= new FileOutputStream("Index_I");
 
         // Creating writers to I, P and A - index-files 
+        //OutputStreamWriter iWriter = new OutputStreamWriter(new BufferedOutputStream(i_index), encoding);
         BufferedWriter aWriter = new BufferedWriter(new FileWriter(a_index));
         DataOutputStream pWriter = new DataOutputStream(new BufferedOutputStream(p_index));
-        OutputStreamWriter iWriter = new OutputStreamWriter(new BufferedOutputStream(i_index), encoding);
-
+        DataOutputStream iWriter = new DataOutputStream(new BufferedOutputStream(i_index));
 
         // Temp variable that stores the word previous and then compares it to see if the word is unique or not.
         String word = "";
@@ -187,13 +227,15 @@ public class Konstruktion
                 // byteIndex converted from String to Int and stored in binIndex
                 binIndex = Integer.parseInt(byteIndex);
 
+                // Length of the word
+                int lengthOfWord = index_Word.length();
+
                 // Takes first 3 letters of the word writing to I
-                if(index_Word.length() < 3)
+                if(lengthOfWord < 3)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.append(index_Word);
-                    int length = index_Word.length();
-                    for(int i = 3 - length; i <= 3; i++)
+                    for(int i = 3 - lengthOfWord; i <= 3; i++)
                     {
                         sb.append(" ");
                     }
@@ -211,23 +253,15 @@ public class Konstruktion
                     // and not the first word of the text, we have to add wordfreq to the previous word then continue with the algo
                     if (!(word.equals(""))) 
                     {
-                        // We add space
-                        iWriter.write(space);
-
-                        // Add frequency of the previous word (temp changed for readability)
-                        String s_Wordfreq = "" + wordfreq;
-      
-                        // Writing to I index
-                        iWriter.write(s_Wordfreq);
+                       
+                        //Add frequence
+                        iWriter.writeInt(wordfreq);
 
                         // Reset the wordfreq
                         wordfreq = 0;
 
-                        // New line
-                        iWriter.write(newLine);
-
-                        // Update I_byte Counter
-                        i_byteCounter += s_Wordfreq.length() + 1;
+                        //
+                        i_byteCounter += 4;
                     }
                     
                     // if a_word doesn't match check_word. add it to A_list array and file
@@ -246,12 +280,11 @@ public class Konstruktion
                         
                             StringBuilder build_a = new StringBuilder();
 
-
-
                             build_a.append(hashval);
                             build_a.append(space);
                             build_a.append(i_position);
                             build_a.append(newLine);
+                            
                             // Now writing to A
                             aWriter.write(build_a.toString());
 
@@ -262,13 +295,11 @@ public class Konstruktion
                     // Updates the word variable, it checks the word behind.
                     word = index_Word;
                     
-                    // Takes first 3 letters of the word writing to I
-                    if(index_Word.length() < 3)
+                    if(lengthOfWord < 3)
                     {
                         StringBuilder sb = new StringBuilder();
                         sb.append(index_Word);
-                        int length = index_Word.length();
-                        for(int i = 3 - length; i <= 3; i++)
+                        for(int i = 3 - lengthOfWord; i <= 3; i++)
                         {
                             sb.append(" ");
                         }
@@ -279,30 +310,31 @@ public class Konstruktion
                     {
                         a_word = index_Word.substring(0, 3);
                     }
-                    
-                    // Here we write the word to file I
-                    iWriter.write(index_Word);
 
-                    // We add space
-                    iWriter.write(space);
+                    // Writes the length of word were putting in Index I - 1 BYTE
+                    iWriter.writeByte(lengthOfWord);
+                    
+                    //Converts word ISO-8859-1 to bytes
+                    byte[] wordInBytes = index_Word.getBytes(encoding);
+
+                    // Here we write the word to file I IN BYTES
+                    iWriter.write(wordInBytes);
 
                     // Sets p_position to p_bytecounter before writing it out
                     p_position = p_byteCounter;
 
                     // Now we add the position
-                    //String sPos = "" + p_position;
-                    //iWriter.write(sPos);
-                    iWriter.write(p_position);
+                    iWriter.writeInt(p_position);
 
-                    // We write the ByteIndex in L to P
-                    pWriter.writeByte(binIndex);
-                    p_byteCounter++;
+                    // We write the ByteIndex in L to P - 4 Bytes
+                    pWriter.writeInt(binIndex);
+                    p_byteCounter += 4;
 
                     // Increments the frequency of the word
                     wordfreq++;
 
-                    //i_byteCounter += index_Word.length() + 1 + sPos.length() + 1;
-                    i_byteCounter += index_Word.length() + 1 + p_position + 1;
+                    // Increment 1 byte for letter ammount, 1 byte for each letter, 4 bytes for Integer containing pos
+                    i_byteCounter += 1 + lengthOfWord + 4;
 
                 }
                 // If the word is not unique
@@ -319,14 +351,7 @@ public class Konstruktion
             // Special case. WordFreq on the last word will not be written. We can fix this by adding it manually
             if ((data = textReader.readLine()) == null) 
             {
-                // We add space
-                iWriter.write(space);
-
-                // Add frequency of the previous word
-                //String s_Wordfreq = "" + wordfreq;
-                //iWriter.write(s_Wordfreq);
-                iWriter.write(wordfreq);
-
+                iWriter.writeInt(wordfreq);
             }
             // Close the writers 
             iWriter.close();
@@ -426,7 +451,7 @@ public class Konstruktion
     public static void main(String[] args) throws IOException 
     {
         int[] hashTable =  konstruktor();    
-        String findWord = "özgur";
+        String findWord = "özz";
         find(findWord, hashTable);
     }
 }
