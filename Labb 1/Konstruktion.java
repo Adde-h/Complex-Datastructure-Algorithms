@@ -58,26 +58,83 @@ public class Konstruktion
 
      */
 
-     public static int BinarySearch(String word_lookUP, int smallKey, int largeKey, RandomAccessFile i_index) throws IOException
-     {
-        // Compare word_LookUp with middle element
-        // If X == middle element then return the index value
-        // If X> middle emenet then BS to middle-largeKey
-        // If X<Middle then BS to smallKey<- middle
-
-        // Look in the middle
-        int middle_key = (smallKey + largeKey)/2;
-        i_index.seek(middle_key);
-
-        // Take out the word in the middle
-        byte[] middlekey = new byte[64];
-        //String wordRead = i_index.read();
-        //System.out.println("Word in middle is ->: " + wordRead);
-
-        // Compare middle key
+    public static void runProgram(String input, int[] hashTable)
+    {
+        switch(input)
+        {
+            case k:
             
-        return 0;
-     }
+            
+            break; 
+        }
+        find(input, hashTable);
+    }
+
+    //Compare word lengths 
+     public static long Iterate(String word_lookUP, int startPos, int lastPos, RandomAccessFile i_index) throws IOException
+     {
+        
+        // Points to the I position we are currently looking
+        long indexPointer = startPos;
+
+        // 
+        long index = 0; 
+        
+        //The length of the word we are looking for 
+        int wordLength = word_lookUP.length();
+        int checkLength = 0;
+        boolean found = false;
+
+        // First instance of the same three alfabets 
+        i_index.seek(indexPointer);
+
+        // Length of the word we iterate to 
+        checkLength = i_index.read();
+
+        // Iterate through startPos to lastPos to find the find  
+        while((!found) && i_index.getFilePointer() < lastPos)
+        {
+            // If they have the same length, check the word else continue iterateration
+            if(wordLength == checkLength)
+            {
+                //System.out.println("OK");
+                // Bring the word
+                byte[] checkWordByte = new byte[checkLength];
+                indexPointer = i_index.getFilePointer();
+                i_index.readFully(checkWordByte);
+                String checkWord = new String(checkWordByte, "ISO-8859-1");
+                
+                if (word_lookUP.equals(checkWord))
+                {
+                    found = true;
+                    // Move back 1 byte to begin pointer in start of the wordlength
+                    index =  indexPointer - 1;
+                }
+                else
+                {
+                    indexPointer += checkLength + 4 + 4;
+                    i_index.seek(indexPointer);
+                    //System.out.println("FilePointer ELSE:" + i_index.getFilePointer());
+                    checkLength = i_index.readByte();
+
+                }
+            }
+            // If they do not have the same length
+            else
+            {
+                //Iterate the word we are NOT looking for
+                //Iterate wordlengthnumber + wordlength + 4 bytes of pos + 4 bytes of freq
+                indexPointer += 1 + checkLength + 4 + 4;
+                i_index.seek(indexPointer);
+                //System.out.println("FilePointer:" + i_index.getFilePointer());
+                checkLength = i_index.readByte();
+             
+            }            
+        }
+
+        return index; 
+
+    }
 
 
     public static void find(String findWord, int[] hashTable)
@@ -94,17 +151,14 @@ public class Konstruktion
             int hashVal = hasher(seekLetters);
            
            // Go to I and get the word length 
-            long look_I = hashTable[hashVal];
-            raf_I.seek(look_I);
+            int look_I = hashTable[hashVal];
+            int look_j = hashTable[hashVal+1];
+            //raf_I.seek(look_I);
+            long pos_found = Iterate(findWord, look_I, look_j, raf_I);
+            raf_I.seek(pos_found);
+            System.out.println("Where in I to look for word being searched : " + pos_found);
             int lengthOfWord = raf_I.read();
-            System.out.println("Where in I to look for word being searched : " + look_I);
             System.out.println("Length of word were seeking is: " + lengthOfWord);
-            
-            /* Binary search delen 
-
-
-
-            */
 
             // Word found! -> Reads the word and puts in the byte array. Print out later
             byte[] wordFromI = new byte[lengthOfWord];
@@ -123,22 +177,23 @@ public class Konstruktion
             raf_P.seek(posOfP);
             int whereInL = raf_P.readInt();
             System.out.println("Where In Index L Word occurs: " + whereInL);
-
+    
+            // Where the sentece will be stored
             byte[] scentenceFromL = new byte[60 + lengthOfWord];
 
-            if(whereInL < 30)
+            // Special case when word is before the 30th byte
+            if(whereInL < 30) 
             {
+                raf_L.seek(0);
+                raf_L.readFully(scentenceFromL, 0, whereInL + lengthOfWord + 30 );
 
             }
-            else
+            else // OBS!! NO SPECIAL CASE FOR LAST 30 BYTES
             {
                 raf_L.seek(whereInL-30);
-                //raf_L.seek(whereInL);
                 raf_L.readFully(scentenceFromL, 0, 60 + lengthOfWord);
-                //raf_L.readFully(scentenceFromL, 0, 30);
             }
 
-            
             String scentenceFound = new String(scentenceFromL,"ISO-8859-1");
             System.out.println("The scentence we are seaching for is found! : " + scentenceFound);
             
@@ -160,7 +215,7 @@ public class Konstruktion
     public static int[] konstruktor() throws IOException 
     {
         String encoding = "ISO-8859-1";
-        String fileToRead = "testFile123.txt";
+        String fileToRead = "RawStart.txt";
 
         // textReader läser filen med encodning ISO-8859-1
         BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToRead), encoding));
@@ -210,7 +265,10 @@ public class Konstruktion
 
         int maxHashVal = 30*900 + 30*30 + 30;
         int[] hashTable = new int[maxHashVal + 1];
-
+        
+        // Pointers for redirecting empty non-used hash_positions of hashtable
+        int pekareA = 900;
+        int pekareB;
 
         try 
         {
@@ -267,17 +325,25 @@ public class Konstruktion
                     // if a_word doesn't match check_word. add it to A_list array and file
                     if(!(a_check_word.equals(a_word)))
                         {
-
                             // Handles special case first time running the constructor
                             if(!(a_check_word.equals("")))
                             {
                                 i_position = i_byteCounter;
                             }
-                            
                             //Get HashValue and insert it to Hashtable
                             hashval = hasher(a_word);
+                            
+                            pekareB = hashval;
+
+                            while(pekareA < pekareB && pekareA < maxHashVal+1)
+                            {
+                                pekareA++;
+                                hashTable[pekareA] = i_position;
+                                
+                            }
                             hashTable[hashval] = i_position;
-                        
+                            pekareA = pekareB;
+
                             StringBuilder build_a = new StringBuilder();
 
                             build_a.append(hashval);
@@ -333,7 +399,7 @@ public class Konstruktion
                     // Increments the frequency of the word
                     wordfreq++;
 
-                    // Increment 1 byte for letter ammount, 1 byte for each letter, 4 bytes for Integer containing pos
+                    // Increment 1 byte for letter amount, 1 byte for each letter, 4 bytes for Integer containing pos
                     i_byteCounter += 1 + lengthOfWord + 4;
 
                 }
@@ -451,7 +517,7 @@ public class Konstruktion
     public static void main(String[] args) throws IOException 
     {
         int[] hashTable =  konstruktor();    
-        String findWord = "özz";
+        String findWord = "atellanus";
         find(findWord, hashTable);
     }
 }
