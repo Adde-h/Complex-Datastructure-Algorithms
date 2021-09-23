@@ -17,9 +17,11 @@ public class Main {
 
   public static final String DEFAULT_DIR = "./test";
 
-  public static List<String> readWordList(BufferedReader input) throws IOException {
+  public static List<String> readWordList(BufferedReader input) throws IOException 
+  {
     LinkedList<String> list = new LinkedList<String>();
-    while (true) {
+    while (true) 
+    {
       String s = input.readLine();
       if (s.equals("#"))
         break;
@@ -28,7 +30,8 @@ public class Main {
     return list;
   }
 
-  public static void main(String args[]) throws IOException {
+  public static void main(String args[]) throws IOException 
+  {
     if (parseArgs(args)) {
       System.exit(0);
     }

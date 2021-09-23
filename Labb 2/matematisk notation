@@ -1,0 +1,6 @@
+PD(l1,l2) =
+
+l1                                                          om l1 = 0                      //Basfall
+l2                                                          annars, om l2 = 0              //Basfall
+min(PD(l1-1,l2-1), PD(l1-1, l2) + 1, PD(l1, l2-1) + 1)      annars, om w1[l1-1] = w2[l2-1] //Bokstav samma. gör detta
+min(PD(l1-1,l2-1) + 1, PD(l1-1, l2) + 1, PD(l1, l2-1) + 1)  annars                         //Annars gör detta
