@@ -11,9 +11,10 @@ public class ClosestWords
 
   int closestDistance = -1;
 
-int partDistOptimized(String w1, String w2, int w1len, int w2len) 
+  int partDistOptimized(String w1, String w2, int w1len, int w2len) 
   {
-    int[][] matrix = new int[w1len + 1][w1len + 1];
+    //System.out.println("String 1: " + );
+    int[][] matrix = new int[w1len + 1][w2len + 1];
 
     // Base case --> just return the length of the other word
     if (w1len == 0)
@@ -23,20 +24,19 @@ int partDistOptimized(String w1, String w2, int w1len, int w2len)
       return w1len;
 
     // Fill the first row and column with w1 length. The length represent the chars
-    for (int i = 0; i < w1len+1; i++) 
+    for (int i = 0; i <= w1len; i++) 
     {
       matrix[i][0] = i;
     }
-    for (int j = 0; j < w2len+1; j++) 
+    for (int j = 0; j <= w2len; j++) 
     {
       matrix[0][j] = j;
     }
 
-    for (int i = 1; i < w1len+1; i++) 
+    for (int i = 1; i <= w1len; i++) 
     {
-      for (int j = 1; j < w2len+1; j++) 
+      for (int j = 1; j <= w2len; j++) 
       {
-
         // OM bokstäverna är lika
         if ((w1.charAt(i - 1)) == (w2.charAt(j - 1))) 
         {
@@ -49,20 +49,20 @@ int partDistOptimized(String w1, String w2, int w1len, int w2len)
         }
       }
     }
-
+/*
     for (int index = 0; index < matrix.length; index++) {
       for (int index2 = 0; index2 < matrix[index].length; index2++) {
         System.out.print(matrix[index][index2] + " ");
       }
       System.out.println();
     }
-
+  */  
     return(matrix[w1len][w2len]);
-    
+
   }
 
-  //Returns the smallest integer of a parameter
-int min(int diag, int left, int top)
+  //Returns the smallest integer of a parameter out of the three
+  int min(int diag, int left, int top)
   {
     int[] closest = {diag, left, top};
     int minSoFar = closest[0];
@@ -76,7 +76,8 @@ int min(int diag, int left, int top)
     return minSoFar;
   }
 
-int partDist(String w1, String w2, int w1len, int w2len) {
+  int partDist(String w1, String w2, int w1len, int w2len) 
+  {
     if (w1len == 0)
       return w2len;
     if (w2len == 0)
