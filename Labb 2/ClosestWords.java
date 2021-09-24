@@ -5,8 +5,7 @@
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClosestWords 
-{
+public class ClosestWords {
   LinkedList<String> closestWords = null;
 
   int closestDistance = -1;
@@ -14,37 +13,39 @@ public class ClosestWords
   int[][] globalMatrix;
   String wordPrev = "";
 
-  // W1 stays, its the wrong word to be spelled correctly. W2 changes, it's
-  // brought from the wordlist
-  int partDistOptimized(String w1, String w2, int w1len, int w2len) {
+
+  int partDistOptimized(String w1, String w2, int w1len, int w2len) 
+  {
     // Compare the previous word with the new word from the wordlist
     // If the same letters, same matrice
     // If not the same letter at a certain spot, End the for -loop and matrice
     // starts there
-    int letterCounter = 0;
-    if (!(wordPrev.equals(""))) 
+
+    int letterCounter = nrOfSameLetter(wordPrev, w2);
+    wordPrev = w2;
+    int length;
+
+    if (!(wordPrev.equals(""))) // wordprev = skl. w2 = sklar
     {
-      for (int i = 0; i < w2.length(); i++) 
+      System.out.println("WordPrev: " + wordPrev);
+      System.out.println("New W2: " + w2);
+      if (w2len > wordPrev.length()) 
       {
-        if (wordPrev.charAt(i) == w2.charAt(i)) 
-        {
-          letterCounter++;
-        } 
-        else 
-        {
-          wordPrev = w2;
-          break;
-        }
+        System.out.println("WordPrev Smaller!");
+        length = wordPrev.length();
+      } 
+      else 
+      {
+        length = w2len;
+        System.out.println("W2Len Smaller!");
       }
     }
 
     int[][] matrix = new int[w1len + 1][w2len + 1];
 
     // Copy the previous matrix
-    for (int i = 0; i < letterCounter; i++) 
-    {
-      for (int j = 0; j < letterCounter; j++) 
-      {
+    for (int i = 0; i < letterCounter; i++) {
+      for (int j = 0; j < letterCounter; j++) {
         matrix[i][j] = globalMatrix[i][j];
       }
     }
@@ -100,9 +101,22 @@ public class ClosestWords
      */
 
     globalMatrix = matrix;
-    //wordPrev = w2;
     return (globalMatrix[w1len][w2len]);
 
+  }
+
+  int nrOfSameLetter(String w1, String w2)
+  {
+    int length = Math.min(w1.length(), w2.length());
+    for (int i = 0; i < length; i++) 
+    {
+      if (wordPrev.charAt(i) != w2.charAt(i)) 
+      {
+        System.out.println("LetterCounter!: " + i);
+        return i;
+      } 
+    }
+    return 0;
   }
 
   // Returns the smallest integer of a parameter out of the three
@@ -138,9 +152,9 @@ public class ClosestWords
     return res;
   }
 
-  int distance(String w1, String w2) {
+  int distance(String w1, String w2) 
+  {
     return partDistOptimized(w1, w2, w1.length(), w2.length());
-
     // return partDist(w1, w2, w1.length(), w2.length());
   }
 
@@ -168,12 +182,11 @@ public class ClosestWords
   List<String> getClosestWords() {
     return closestWords;
   }
-
   /*
-   * public static void main(String[] args) {
+   * public static void main(String[] args) { //Main.main("large");
    * 
-   * String word1 = "blad"; String word2 = "labd"; int w1len = word1.length(); int
-   * w2len = word2.length();
+   * String word1 = "blada"; String word2 = "labd"; int w1len = word1.length();
+   * int w2len = word2.length();
    * 
    * System.out.println(ClosestWords.partDistOptimized(word1, word2, w1len,
    * w2len));
