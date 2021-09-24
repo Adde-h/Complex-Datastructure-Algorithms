@@ -11,10 +11,43 @@ public class ClosestWords
 
   int closestDistance = -1;
 
-  int partDistOptimized(String w1, String w2, int w1len, int w2len) 
-  {
-    //System.out.println("String 1: " + );
+  int[][] globalMatrix;
+  String wordPrev = "";
+
+  // W1 stays, its the wrong word to be spelled correctly. W2 changes, it's
+  // brought from the wordlist
+  int partDistOptimized(String w1, String w2, int w1len, int w2len) {
+    // Compare the previous word with the new word from the wordlist
+    // If the same letters, same matrice
+    // If not the same letter at a certain spot, End the for -loop and matrice
+    // starts there
+    int letterCounter = 0;
+    if (!(wordPrev.equals(""))) 
+    {
+      for (int i = 0; i < w2.length(); i++) 
+      {
+        if (wordPrev.charAt(i) == w2.charAt(i)) 
+        {
+          letterCounter++;
+        } 
+        else 
+        {
+          wordPrev = w2;
+          break;
+        }
+      }
+    }
+
     int[][] matrix = new int[w1len + 1][w2len + 1];
+
+    // Copy the previous matrix
+    for (int i = 0; i < letterCounter; i++) 
+    {
+      for (int j = 0; j < letterCounter; j++) 
+      {
+        matrix[i][j] = globalMatrix[i][j];
+      }
+    }
 
     // Base case --> just return the length of the other word
     if (w1len == 0)
@@ -28,56 +61,63 @@ public class ClosestWords
     {
       matrix[i][0] = i;
     }
+
     for (int j = 0; j <= w2len; j++) 
     {
       matrix[0][j] = j;
     }
 
-    for (int i = 1; i <= w1len; i++) 
+    // Special case -> The rows that werent completly filled from prev matrice
+    for (int i = 1; i <= letterCounter; i++) 
+    {
+      for (int j = letterCounter + 1; j < w2len; j++) 
+      {
+        matrix[i][j] = min(matrix[i - 1][j - 1], matrix[i - 1][j], matrix[i][j - 1]) + 1;
+      }
+    }
+
+    for (int i = letterCounter + 1; i <= w1len; i++) 
     {
       for (int j = 1; j <= w2len; j++) 
       {
-        // OM bokstäverna är lika
+        // OM första bokstaven är lika
         if ((w1.charAt(i - 1)) == (w2.charAt(j - 1))) 
         {
-          matrix[i][j] = matrix[i-1][j-1];
+          matrix[i][j] = matrix[i - 1][j - 1];
         }
         // Om bokstäverna är inte lika -> Kolla i matrisen för minsta tal sedan + 1
         else 
         {
-          matrix[i][j] = min(matrix[i-1][j-1], matrix[i-1][j], matrix[i][j-1]) + 1;
+          matrix[i][j] = min(matrix[i - 1][j - 1], matrix[i - 1][j], matrix[i][j - 1]) + 1;
         }
       }
     }
-/*
-    for (int index = 0; index < matrix.length; index++) {
-      for (int index2 = 0; index2 < matrix[index].length; index2++) {
-        System.out.print(matrix[index][index2] + " ");
-      }
-      System.out.println();
-    }
-  */  
-    return(matrix[w1len][w2len]);
+
+    /*
+     * PRINT MATRIX for (int index = 0; index < matrix.length; index++) { for (int
+     * index2 = 0; index2 < matrix[index].length; index2++) {
+     * System.out.print(matrix[index][index2] + " "); } System.out.println(); }
+     */
+
+    globalMatrix = matrix;
+    //wordPrev = w2;
+    return (globalMatrix[w1len][w2len]);
 
   }
 
-  //Returns the smallest integer of a parameter out of the three
-  int min(int diag, int left, int top)
-  {
-    int[] closest = {diag, left, top};
+  // Returns the smallest integer of a parameter out of the three
+  int min(int diag, int left, int top) {
+    int[] closest = { diag, left, top };
     int minSoFar = closest[0];
-    for (int min : closest) 
-    {
-      if(min < minSoFar)
-      {
+    for (int min : closest) {
+      if (min < minSoFar) {
         minSoFar = min;
       }
     }
     return minSoFar;
   }
 
-  int partDist(String w1, String w2, int w1len, int w2len) 
-  {
+  int partDist(String w1, String w2, int w1len, int w2len) {
     if (w1len == 0)
       return w2len;
     if (w2len == 0)
@@ -98,11 +138,10 @@ public class ClosestWords
     return res;
   }
 
-  int distance(String w1, String w2) 
-  {
+  int distance(String w1, String w2) {
     return partDistOptimized(w1, w2, w1.length(), w2.length());
 
-    //return partDist(w1, w2, w1.length(), w2.length());
+    // return partDist(w1, w2, w1.length(), w2.length());
   }
 
   // String "w" is the word to be spell-checked and compared to the list
@@ -110,8 +149,7 @@ public class ClosestWords
   public ClosestWords(String w, List<String> wordList) {
 
     // Iterate through all the words in the wordlist och
-    for (String s : wordList) 
-    {
+    for (String s : wordList) {
       int dist = distance(w, s);
       // System.out.println("d(" + w + "," + s + ")=" + dist);
       if (dist < closestDistance || closestDistance == -1) {
@@ -123,27 +161,23 @@ public class ClosestWords
     }
   }
 
-  int getMinDistance() 
-  {
+  int getMinDistance() {
     return closestDistance;
   }
 
-  List<String> getClosestWords() 
-  {
+  List<String> getClosestWords() {
     return closestWords;
   }
-  
-/*
-  public static void main(String[] args) 
-  {
-    
-    String word1 = "blad";
-    String word2 = "labd";
-    int w1len = word1.length();
-    int w2len = word2.length();
 
-    System.out.println(ClosestWords.partDistOptimized(word1, word2, w1len, w2len));
-  
-  }
-*/
+  /*
+   * public static void main(String[] args) {
+   * 
+   * String word1 = "blad"; String word2 = "labd"; int w1len = word1.length(); int
+   * w2len = word2.length();
+   * 
+   * System.out.println(ClosestWords.partDistOptimized(word1, word2, w1len,
+   * w2len));
+   * 
+   * }
+   */
 }
