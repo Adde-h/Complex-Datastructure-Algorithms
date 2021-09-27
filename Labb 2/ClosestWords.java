@@ -28,20 +28,6 @@ public class ClosestWords
     }
   }
 
-  void insertToCell(int[][] matrix, String w1, String w2, int i, int j)
-  {
-    // OM första bokstaven är lika
-    if ((w1.charAt(i - 1)) == (w2.charAt(j - 1))) 
-    {
-      matrix[i][j] = matrix[i - 1][j - 1];
-    }
-    // Om bokstäverna är inte lika -> Kolla i matrisen för minsta tal sedan + 1
-    else 
-    {
-      matrix[i][j] = min(matrix[i - 1][j - 1], matrix[i - 1][j], matrix[i][j - 1] ) + 1;
-    }
-  }
-
   int partDistOptimized(String w1, String w2, int w1len, int w2len) 
   {
     // Compare the previous word with the new word from the wordlist
@@ -62,7 +48,7 @@ public class ClosestWords
     fillFirst(matrix, w1len, w2len);
 
     // Special case -> The rows that werent completly filled from prev matrice
-    for (int i = 1; i <= w1len; i++) //????????????????????????????????
+    for (int i = 1; i <= w1len; i++) 
     {
       for (int j = letterCounter + 1; j <= w2len; j++)
       {
@@ -81,7 +67,6 @@ public class ClosestWords
      * System.out.print(matrix[index][index2] + " "); } System.out.println(); }
     
     */
-
     wordPrev = w2;
     return (matrix[w1len][w2len]);
 
@@ -140,6 +125,8 @@ public class ClosestWords
     // Iterate through all the words in the wordlist och
     for (String s : wordList) 
     {
+      // If the word we read from WordList is longer than the current closest distance, skip the word from WordList
+      // (We already have a better "more likely" word that we wanted to have)
       if((Math.abs(s.length() - w.length()) > closestDistance) && closestDistance != -1)
       {
         continue;
