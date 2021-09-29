@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Scanner;
 import java.io.BufferedWriter;
 
 import java.nio.charset.StandardCharsets;
@@ -10,13 +9,11 @@ import java.nio.charset.StandardCharsets;
   Påbörjad 2021-09-11
 */
 
-
-
 public class Konstruktion2
 {
   public static int hasher(String tre_alfabetCombo)
   {
-
+    // Hantera fallet där ord längd mindre än 3 och större än 3
     int lengthOfWord = tre_alfabetCombo.length();
     String a_word;
 
@@ -36,120 +33,38 @@ public class Konstruktion2
       a_word = tre_alfabetCombo.substring(0, 3);
     }
 
-
     char[] toHash;
     toHash = a_word.toCharArray();
-    int letter1 = toHash[0];
-    int letter2 = toHash[1];
-    int letter3 = toHash[2];
+    int hashval = 0;
 
+    // Hash funktionen nu
     for (int i = 0; i < toHash.length; i++) 
     {
-      if((int)toHash[i] == 229)
+      if ((int)toHash[i] == 229) // å in Ascii
       {
-        //Write more effective decode of letters program
+        hashval += 27 * Math.pow(30, 2 - i);
+      }
+      else if ((int)toHash[i] == 228) // ä in Ascii
+      {
+        hashval += 28 * Math.pow(30, 2 - i);
+      }
+      else if ((int)toHash[i] == 246) // ö in Ascii
+      {
+        hashval += 29 * Math.pow(30, 2 - i);
+      }
+      else if( (int)toHash[i] > 96 && (int)toHash[i] < 123) //Other words in the alfabet a-z
+      {
+        hashval += ((int) toHash[i] - 96) * Math.pow(30, 2 - i);
       }
     }
-    
-    //ASCII mellan a-z
-    if (letter1 > 96 && letter1 < 123)
-    {
-      letter1 = letter1- 96;
-    }
-    else if (letter1 == 229) // Letter å
-    {
-      letter1 = 28;
-    }
-    else if (letter1 == 228) // Letter ä
-    {
-      letter1 = 29;
-    }
-    else if (letter1 == 246) // Letter ö
-    {
-      letter1 = 30;
-    }
-    else if (letter1 == 32) // Space  
-    {
-      letter1 = 0;
-    }
-    
-
-    //ASCII mellan a-z
-    if (letter1 > 96 && letter1 < 123)
-    {
-      letter1 = letter1 - 96;
-    }
-    else if (letter1 == 229) // Letter å
-    {
-      letter1 = 28;
-    }
-    else if (letter1 == 228) // Letter ä
-    {
-      letter1 = 29;
-    }
-    else if (letter1 == 246) // Letter ö
-    {
-      letter1 = 30;
-    }
-    else if (letter1 == 32) // Space
-    {
-      letter1 = 0;
-    }
-
-    //ASCII mellan a-z
-    if (letter2 > 96 && letter2 < 123)
-    {
-      letter2 = letter2- 96;
-    }
-    else if (letter2 == 229) // Letter å
-    {
-      letter2 = 28;
-    }
-    else if (letter2 == 228) // Letter ä
-    {
-      letter2 = 29;
-    }
-    else if (letter2 == 246) // Letter ö
-    {
-      letter2 = 30;
-    }
-    else if (letter2 == 32) // Space
-    {
-      letter2 = 0;
-    }
-
-    //ASCII mellan a-z
-    if (letter3 > 96 && letter3 < 123)
-    {
-      letter3 = letter3- 96;
-    }
-    else if (letter3 == 229) // Letter å
-    {
-      letter3 = 28;
-    }
-    else if (letter3 == 228) // Letter ä
-    {
-      letter3 = 29; 
-    }
-    else if (letter3 == 246) // Letter ö
-    {
-      letter3 = 30;
-    }
-    else if (letter3 == 32) // Space
-    {
-      letter3 = 0;
-    }
-
-    int hashval = (letter1 * 900) + (letter2 * 30) + letter3;
-
-    return hashval;
+    // Multiplied by 4 because of writeInt (each position takes 4 bytes) --> 
+    return (hashval - 900) * 4;
   }
 
 
   public static void konstruktor() throws IOException 
   {
 
-    String encoding = "ISO-8859-1";
     int maxHashVal = 30*900 + 30*30 + 30;
 
     // Create Index I, A and P files and be able to write to them
@@ -168,10 +83,9 @@ public class Konstruktion2
     BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToRead), "ISO-8859-1"));
 
     //Local variables used in the construction file
-    String[] text_line = textReader.readLine().split("");
-    String wordPrev = text_line[0], byteIndex, currentWord = "";
-    int freq = 1, p_position = 0, p_IntCounter = 0, i_position = 0, i_rowCounter=0, binIndex = Integer.parseInt(text_line[1]);
-    byte[] wordInBytes;
+    String[] text_line = textReader.readLine().split(" ");
+    String wordPrev = text_line[0], currentWord = "";
+    int freq = 1, p_position = 0, p_IntCounter = 0, i_position = 0, i_rowCounter = 0, binIndex = Integer.parseInt(text_line[1]);
     
     while(textReader.ready())
     { 
@@ -193,16 +107,16 @@ public class Konstruktion2
         // Write to Index A if hashval is distict from previous
         if(hasher(wordPrev) != hasher(currentWord))
         {
+          // HÄR STANNADE VI AVVVVVV
           aWriter.seek(hasher(wordPrev));
           aWriter.writeInt(i_position);
-          for (int i = hasher(wordPrev); i < hasher(currentWord); i+=4) 
+          
+          //Fills out non used hashcells to point to next hashcell
+          for (int i = hasher(wordPrev) + 4; i < hasher(currentWord); i += 4) 
           {
             aWriter.seek(i);
-            aWriter.writeInt(i_rowCounter); //i_pos??
-
+            aWriter.writeInt(i_rowCounter);
           }
-
-
           i_position = i_rowCounter;
         }
 
@@ -210,24 +124,43 @@ public class Konstruktion2
         wordPrev = currentWord;
         p_position = p_IntCounter;
       }
+      
       // If the word is not distinct --> Just increase the frequncy counter
       else
       {
         freq++;
-        
       }
-
-
     }
+    // Edgee case -> Last word. Add in manually 
+    if(!textReader.ready())
+    {
+      freq++;
+      pWriter.writeInt(binIndex);        
+      String toWrite = wordPrev + " " + p_position + "" + freq + "\n";
+      iWriter.write(toWrite);
+      
+      aWriter.seek(hasher(wordPrev));
+      aWriter.writeInt(i_position);
+        
+      //Fills out non used hashcells to point to next hashcell
+      for (int i = hasher(wordPrev) + 4; i < hasher(currentWord); i += 4) 
+      {
+        aWriter.seek(i);
+        aWriter.writeInt(i_rowCounter);
+      }
+    }    
+
+    aWriter.close();
+    pWriter.close();
+    iWriter.close();
+    textReader.close();
 
   }
 
   public static void main(String[] args) throws IOException
   {
     konstruktor();
-
   }
   
-
   
 }

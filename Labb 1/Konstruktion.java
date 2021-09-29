@@ -1,6 +1,5 @@
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
-import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.File;
