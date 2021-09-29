@@ -1,6 +1,5 @@
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
-import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.File;
@@ -199,7 +198,6 @@ public class Konstruktion
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
     // Här körs konstruktionsprogrammet
@@ -279,7 +277,7 @@ public class Konstruktion
                 // Length of the word
                 int lengthOfWord = index_Word.length();
 
-                // Takes first 3 letters of the word writing to I
+                // Takes first 3 letters of the word writing to I, If wordlength is less than 3, fill out with space
                 if(lengthOfWord < 3)
                 {
                     StringBuilder sb = new StringBuilder();
@@ -301,8 +299,7 @@ public class Konstruktion
                 {
                     // and not the first word of the text, we have to add wordfreq to the previous word then continue with the algo
                     if (!(word.equals(""))) 
-                    {
-                       
+                    {  
                         //Add frequence
                         iWriter.writeInt(wordfreq);
 
@@ -434,6 +431,30 @@ public class Konstruktion
         int letter2 = toHash[1];
         int letter3 = toHash[2];
 
+        
+        //ASCII mellan a-z
+        if (letter1 > 96 && letter1 < 123)
+        {
+            letter1 = letter1- 96;
+        }
+        else if (letter1 == 229) // Letter å
+        {
+            letter1 = 28;
+        }
+        else if (letter1 == 228) // Letter ä
+        {
+            letter1 = 29;
+        }
+        else if (letter1 == 246) // Letter ö
+        {
+            letter1 = 30;
+        }
+        else if (letter1 == 32) // Space
+        {
+            letter1 = 0;
+        }
+        
+
         //ASCII mellan a-z
         if (letter1 > 96 && letter1 < 123)
         {
@@ -522,14 +543,7 @@ public class Konstruktion
     public static void main(String[] args) throws IOException 
     {
 
-        String findWord = args[0];
-        // //Timer
-        int[] hashTable = konstruktor();
-        
-        if(args != null)
-        {
-            find(findWord, hashTable);
-        }
+       konstruktor();
 
     }
 }
