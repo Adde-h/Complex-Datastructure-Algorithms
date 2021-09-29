@@ -1,250 +1,219 @@
-import java.io.RandomAccessFile;
-import java.io.IOException;
-
+import java.io.*;
+import java.util.Scanner;
 
 public class Konkordans 
 {
 
-    public static int hasher(String tre_alfabetCombo)
+  /*****************  To run on Shell Computer **********************/
+  /*
+    private static File index_P = new File("/var/tmp/Index_P");
+
+  */
+  /******************************************************************/
+
+
+  /*****************  To run on Local Computer **********************/
+    private static File index_P = new File("Index_P");
+
+  /******************************************************************/
+
+
+  public static int hasher(String tre_alfabetCombo)
+  {
+    // Hantera fallet där ord längd mindre än 3 och större än 3
+    int lengthOfWord = tre_alfabetCombo.length();
+    String a_word;
+
+    if(lengthOfWord < 3)
     {
-        char[] toHash;
-        toHash = tre_alfabetCombo.toCharArray();
-        int letter1 = toHash[0];
-        int letter2 = toHash[1];
-        int letter3 = toHash[2];
+      StringBuilder sb = new StringBuilder();
+      sb.append(tre_alfabetCombo);
+      for(int i = 3 - lengthOfWord; i <= 3; i++)
+      {
+        sb.append(" ");
+      }
 
-        
-        //ASCII mellan a-z
-        if (letter1 > 96 && letter1 < 123)
-        {
-            letter1 = letter1- 96;
-        }
-        else if (letter1 == 229) // Letter å
-        {
-            letter1 = 28;
-        }
-        else if (letter1 == 228) // Letter ä
-        {
-            letter1 = 29;
-        }
-        else if (letter1 == 246) // Letter ö
-        {
-            letter1 = 30;
-        }
-        else if (letter1 == 32) // Space
-        {
-            letter1 = 0;
-        }
-        
-
-        //ASCII mellan a-z
-        if (letter1 > 96 && letter1 < 123)
-        {
-            letter1 = letter1- 96;
-        }
-        else if (letter1 == 229) // Letter å
-        {
-            letter1 = 28;
-        }
-        else if (letter1 == 228) // Letter ä
-        {
-            letter1 = 29;
-        }
-        else if (letter1 == 246) // Letter ö
-        {
-            letter1 = 30;
-        }
-        else if (letter1 == 32) // Space
-        {
-            letter1 = 0;
-        }
-
-        //ASCII mellan a-z
-        if (letter2 > 96 && letter2 < 123)
-        {
-            letter2 = letter2- 96;
-        }
-        else if (letter2 == 229) // Letter å
-        {
-            letter2 = 28;
-        }
-        else if (letter2 == 228) // Letter ä
-        {
-            letter2 = 29;
-        }
-        else if (letter2 == 246) // Letter ö
-        {
-            letter2 = 30;
-        }
-        else if (letter2 == 32) // Space
-        {
-            letter2 = 0;
-        }
-
-        //ASCII mellan a-z
-        if (letter3 > 96 && letter3 < 123)
-        {
-            letter3 = letter3- 96;
-        }
-        else if (letter3 == 229) // Letter å
-        {
-            letter3 = 28;
-        }
-        else if (letter3 == 228) // Letter ä
-        {
-            letter3 = 29;
-        }
-        else if (letter3 == 246) // Letter ö
-        {
-            letter3 = 30;
-        }
-        else if (letter3 == 32) // Space
-        {
-            letter3 = 0;
-        }
-
-        int hashval = (letter1 * 900) + (letter2 * 30) + letter3;
-
-        return hashval;
+      a_word = sb.toString();
+    }
+    else
+    {
+      a_word = tre_alfabetCombo.substring(0, 3);
     }
 
-  public static long Iterate(String word_lookUP, int startPos, int lastPos, RandomAccessFile i_index) throws IOException 
-  {
+    char[] toHash;
+    toHash = a_word.toCharArray();
+    int hashval = 0;
 
-    // Points to the I position we are currently looking
-    long indexPointer = startPos;
-
-    //
-    long index = 0;
-
-    // The length of the word we are looking for
-    int wordLength = word_lookUP.length();
-    int checkLength = 0;
-    boolean found = false;
-
-    // First instance of the same three alfabets
-    i_index.seek(indexPointer);
-
-    // Length of the word we iterate to
-    checkLength = i_index.read();
-
-    // Iterate through startPos to lastPos to find the find
-    while ((!found) && i_index.getFilePointer() < lastPos) 
+    // Hash funktionen nu
+    for (int i = 0; i < toHash.length; i++) 
     {
-      // If they have the same length, check the word else continue iterateration
-      if (wordLength == checkLength) 
+      if ((int)toHash[i] == 229) // å in Ascii
       {
-        // System.out.println("OK");
-        // Bring the word
-        byte[] checkWordByte = new byte[checkLength];
-        indexPointer = i_index.getFilePointer();
-        i_index.readFully(checkWordByte);
-        String checkWord = new String(checkWordByte, "ISO-8859-1");
+        hashval += 27 * Math.pow(30, 2 - i);
+      }
+      else if ((int)toHash[i] == 228) // ä in Ascii
+      {
+        hashval += 28 * Math.pow(30, 2 - i);
+      }
+      else if ((int)toHash[i] == 246) // ö in Ascii
+      {
+        hashval += 29 * Math.pow(30, 2 - i);
+      }
+      else if( (int)toHash[i] > 96 && (int)toHash[i] < 123) //Other words in the alfabet a-z
+      {
+        hashval += ((int) toHash[i] - 96) * Math.pow(30, 2 - i);
+      }
+    }
+    // Multiplied by 4 because of writeInt (each position takes 4 bytes) --> 
+    return (hashval - 900) * 4;
+  }
 
-        if (word_lookUP.equals(checkWord)) 
-        {
-          found = true;
-          // Move back 1 byte to begin pointer in start of the wordlength
-          index = indexPointer - 1;
-        } 
-        else 
-        {
-          indexPointer += checkLength + 4 + 4;
-          i_index.seek(indexPointer);
-          // System.out.println("FilePointer ELSE:" + i_index.getFilePointer());
-          checkLength = i_index.readByte();
+  /* From Pseudocode in Lecture 3*/
+  public static String[] check_i (String wordLook) throws IOException
+  {
+    // Access the files 
+    RandomAccessFile aReader = new RandomAccessFile("Index_A", "r");
+    RandomAccessFile iReader = new RandomAccessFile("Index_I", "r");
+    
+    // Find the word in A index to know where to look in I Index
+    aReader.seek(hasher(wordLook));
+    int i = aReader.readInt();
+    aReader.seek(hasher(wordLook) + 4);
+    int j = aReader.readInt();
 
+    int middle = 0;
+
+    //Word, PositionInP, Frequency --> Binary search index I to find the exact word
+    String[] fromIndexI = new String[3];
+    while(i - j > 1000 && j > i)
+    {
+      middle = (i + j) / 2;
+      iReader.seek(middle);
+      fromIndexI = iReader.readLine().split(" ");
+      int checkWord = fromIndexI[0].compareTo(wordLook);
+
+      // Same word were looking for!
+      if (checkWord == 0) 
+      {
+        break;         
+      }
+      // Word were looking for is less than we've found
+      else if (checkWord < 0)
+      {
+        i = middle;
+      }
+      // Word were looking for is greater than we've found
+      else
+      {
+        j = middle;
+      }
+    }
+
+    iReader.seek(i);      
+    
+    while (true) 
+      {
+        fromIndexI = iReader.readLine().split(" ");
+        // Ordet finns 
+        if(fromIndexI[0].compareTo(wordLook) == 0)
+        {
+          iReader.close();
+          aReader.close();
+          return fromIndexI;
+        }
+        else if(fromIndexI[0].compareTo(wordLook) > 0)
+        {
+          System.out.println("Word is not in the file, Null returned");
+          System.exit(1);
+          iReader.close();
+          aReader.close();
+          return null;
         }
       }
-      // If they do not have the same length
+  }
+
+  private static String printer (String wordlook) throws IOException
+  {
+       
+    /* Korpus on Shell computer */
+    /*
+     /afs/kth.se/misc/info/kurser/DD2350/adk21/labb1/korpus
+    */
+    
+    // Finds the files
+    RandomAccessFile korpus = new RandomAccessFile("korpus", "r");
+    RandomAccessFile pReader = new RandomAccessFile(index_P, "r");
+    
+    // Find the word in index I 
+    String[] i_row = check_i(wordlook);
+    int p_Pos = Integer.parseInt(i_row[1]);
+    int lineFromI;
+    int frequncy = Integer.parseInt(i_row[2]);
+    int rowsToPrint;
+    
+    StringBuilder allText = new StringBuilder();
+
+    // Choose how much we want to print
+    if(frequncy > 25)
+    {
+      System.out.println("The word " + wordlook + " occurs " + frequncy + " times, how many rows do you want to see?");
+      System.out.println("Type in amount of rows to print between [1-" + frequncy + "]");
+      Scanner userInput = new Scanner(System.in);
+      rowsToPrint = userInput.nextInt();
+      userInput.close();
+    }
+    else
+    {
+      System.out.println("The word " + wordlook + " occurs " + frequncy + " times");
+      rowsToPrint = frequncy;
+    }
+    
+    // Now we extract information from P 
+    pReader.seek(p_Pos);
+    for (int i = 0; i < rowsToPrint; i++) 
+    {
+      lineFromI = pReader.readInt();
+      if (lineFromI < 30) 
+      {
+        byte[] sentence = new byte[lineFromI + wordlook.length() + 30];
+        korpus.seek(0);
+        korpus.read(sentence);
+        allText.append(new String(sentence, "ISO-8859-1").replaceAll("[\\n\\t]", " "));
+        allText.append("\n");
+      } 
       else 
       {
-        // Iterate the word we are NOT looking for
-        // Iterate wordlengthnumber + wordlength + 4 bytes of pos + 4 bytes of freq
-        indexPointer += 1 + checkLength + 4 + 4;
-        i_index.seek(indexPointer);
-        // System.out.println("FilePointer:" + i_index.getFilePointer());
-        checkLength = i_index.readByte();
-
+        byte[] sentence = new byte[30 + wordlook.length() + 30];
+        korpus.seek(lineFromI - 30);
+        korpus.read(sentence);
+        allText.append(new String(sentence, "ISO-8859-1").replaceAll("[\\n\\t]", " "));
+        allText.append("\n");
       }
     }
-
-    return index;
+    korpus.close();
+    pReader.close();
+    return allText.toString();
 
   }
 
-  public static void find(String findWord, int[] hashTable) 
+ 
+
+  public static void main(String[] args) throws IOException
   {
-    try 
+
+    /*
+    String wordToFind = args[0].toLowerCase();
+    if(wordToFind == null || (wordToFind.matches("^[^a-zå-ö]+$")) || args.length > 1)
     {
-      // Access the files
-      RandomAccessFile raf_I = new RandomAccessFile("Index_I", "r");
-      RandomAccessFile raf_P = new RandomAccessFile("Index_P", "r");
-      RandomAccessFile raf_L = new RandomAccessFile("korpus", "r");
-
-      // Pull the 3 letters out then get the hash value
-      String seekLetters = findWord.substring(0, 3);
-      int hashVal = hasher(seekLetters);
-
-      // Go to I and get the word length
-      int look_I = hashTable[hashVal];
-      int look_j = hashTable[hashVal + 1];
-      // raf_I.seek(look_I);
-      long pos_found = Iterate(findWord, look_I, look_j, raf_I);
-      raf_I.seek(pos_found);
-      System.out.println("Where in I to look for word being searched : " + pos_found);
-      int lengthOfWord = raf_I.read();
-      System.out.println("Length of word were seeking is: " + lengthOfWord);
-
-      // Word found! -> Reads the word and puts in the byte array. Print out later
-      byte[] wordFromI = new byte[lengthOfWord];
-      raf_I.readFully(wordFromI, 0, lengthOfWord);
-      String wordFound = new String(wordFromI, "ISO-8859-1");
-
-      System.out.println("The word we are searching for is found! : " + wordFound);
-
-      // Extract information
-      int posOfP = raf_I.readInt();
-      System.out.println("Where in P we are looking for: " + posOfP);
-
-      int freqOfWord = raf_I.readInt();
-      System.out.println("FreqOfTheWord: " + freqOfWord);
-
-      raf_P.seek(posOfP);
-      int whereInL = raf_P.readInt();
-      System.out.println("Where In Index L Word occurs: " + whereInL);
-
-      // Where the sentece will be stored
-      byte[] scentenceFromL = new byte[60 + lengthOfWord];
-
-      // Special case when word is before the 30th byte
-      if (whereInL < 30) {
-        raf_L.seek(0);
-        raf_L.readFully(scentenceFromL, 0, whereInL + lengthOfWord + 30);
-
-      } 
-      else // OBS!! NO SPECIAL CASE FOR LAST 30 BYTES
-      {
-        raf_L.seek(whereInL - 30);
-        raf_L.readFully(scentenceFromL, 0, 60 + lengthOfWord);
-      }
-
-      String scentenceFound = new String(scentenceFromL, "ISO-8859-1");
-      System.out.println("The scentence we are seaching for is found! : " + scentenceFound);
-
-      raf_I.close();
-      raf_P.close();
-      raf_L.close();
-
-    } catch (IOException e) 
-    {
-      System.out.println("An error occurred.");
-      e.printStackTrace();
+      System.out.println("Typed either too many words or using words not in the Swedish alphabet ");
+      System.out.println("Try again!");
+      System.exit(0);
     }
-  }
+    */
 
-  public static void main(String[] args) 
-  {
+    // Looks for the word in the Index I and extracts information
+    String wordLook = args[0].toLowerCase(); 
+    System.out.println(printer(wordLook));
 
   }
 }

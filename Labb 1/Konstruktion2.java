@@ -11,12 +11,43 @@ import java.nio.charset.StandardCharsets;
 
 public class Konstruktion2
 {
+
+  /*****************  To run on Shell Computer **********************/
+  /*
+    private static File index_P = new File("/var/tmp/Index_P");
+    private static File i_index_file = new File("/var/tmp/Index_O");
+    private static File a_index = new File("/var/tmp/Index_A");
+
+  */
+  /******************************************************************/
+
+    /*****************  To run on Local Computer **********************/
+    private static File a_index = new File("Index_A");
+    private static String index_P = "Index_P"; 
+    private static File i_index_file = new File("Index_I");
+    private static String fileToRead = "rawindex.txt";
+
+  /******************************************************************/
+
+
+
   public static int hasher(String tre_alfabetCombo)
   {
     // Hantera fallet där ord längd mindre än 3 och större än 3
     int lengthOfWord = tre_alfabetCombo.length();
     String a_word;
+    
+    if(lengthOfWord > 3)
+    {
+      a_word = tre_alfabetCombo.substring(0, 3);
+    }
+    else
+    {
+      a_word = tre_alfabetCombo;
+    }
 
+    
+/*
     if(lengthOfWord < 3)
     {
       StringBuilder sb = new StringBuilder();
@@ -32,6 +63,7 @@ public class Konstruktion2
     {
       a_word = tre_alfabetCombo.substring(0, 3);
     }
+*/
 
     char[] toHash;
     toHash = a_word.toCharArray();
@@ -68,9 +100,7 @@ public class Konstruktion2
     int maxHashVal = 30*900 + 30*30 + 30;
 
     // Create Index I, A and P files and be able to write to them
-    File a_index = new File("Index_A");
-    FileOutputStream p_index = new FileOutputStream("Index_P");
-    File i_index_file = new File("Index_I");
+    FileOutputStream p_index = new FileOutputStream(index_P);
     
     //DataOutputStream aWriter = new DataOutputStream(new BufferedOutputStream(a_index));
     RandomAccessFile aWriter = new RandomAccessFile(a_index, "rw");
@@ -79,7 +109,6 @@ public class Konstruktion2
     aWriter.setLength(maxHashVal * 4); // maxHashVal * size of Integer in bytes
 
     // Reads the raw text-file
-    String fileToRead = "RawStart.txt";
     BufferedReader textReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToRead), "ISO-8859-1"));
 
     //Local variables used in the construction file
@@ -100,7 +129,7 @@ public class Konstruktion2
       //If the word is distinct --> add the previous word with the P position + freq
       if(!currentWord.equals(wordPrev))
       {
-        String toWrite = wordPrev + " " + p_position + "" + freq + "\n";
+        String toWrite = wordPrev + " " + p_position + " " + freq + "\n";
         iWriter.write(toWrite);
         i_rowCounter += toWrite.length();
         
@@ -136,7 +165,7 @@ public class Konstruktion2
     {
       freq++;
       pWriter.writeInt(binIndex);        
-      String toWrite = wordPrev + " " + p_position + "" + freq + "\n";
+      String toWrite = wordPrev + " " + p_position + " " + freq + "\n";
       iWriter.write(toWrite);
       
       aWriter.seek(hasher(wordPrev));
@@ -161,6 +190,4 @@ public class Konstruktion2
   {
     konstruktor();
   }
-  
-  
 }
