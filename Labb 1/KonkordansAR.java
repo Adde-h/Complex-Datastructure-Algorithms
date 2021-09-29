@@ -1,19 +1,19 @@
 import java.io.*;
 import java.util.Scanner;
 
-public class Konkordans 
+public class KonkordansAR 
 {
 
   /*****************  To run on Shell Computer **********************/
-  /*
+  
     private static File index_P = new File("/var/tmp/Index_P");
 
-  */
+  
   /******************************************************************/
 
 
   /*****************  To run on Local Computer **********************/
-    private static File index_P = new File("Index_P");
+    //private static File index_P = new File("Index_P");
 
   /******************************************************************/
 
@@ -141,7 +141,7 @@ public class Konkordans
     */
     
     // Finds the files
-    RandomAccessFile korpus = new RandomAccessFile("korpus", "r");
+    RandomAccessFile korpus = new RandomAccessFile("/afs/kth.se/misc/info/kurser/DD2350/adk21/labb1/korpus", "r");
     RandomAccessFile pReader = new RandomAccessFile(index_P, "r");
     
     // Find the word in index I 
@@ -203,10 +203,11 @@ public class Konkordans
 
     /*
     String wordToFind = args[0].toLowerCase();
-    if(wordToFind == null || (wordToFind.matches("^[^a-zå-ö]+$")) || args.length > 1)
+    
+    if(wordToFind == null || (!(wordToFind.matches("[a-zå-ö]+$"))) || args.length > 1)
     {
-      System.out.println("Typed either too many words or using words not in the Swedish alphabet ");
-      System.out.println("Try again!");
+      System.out.println("Typed either too many words, no words or using words not in the Swedish alphabet ");
+      System.out.println("Thank you come again!");
       System.exit(0);
     }
     */

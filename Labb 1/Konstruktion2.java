@@ -13,20 +13,20 @@ public class Konstruktion2
 {
 
   /*****************  To run on Shell Computer **********************/
-  /*
+
     private static File index_P = new File("/var/tmp/Index_P");
     private static File i_index_file = new File("/var/tmp/Index_O");
     private static File a_index = new File("/var/tmp/Index_A");
-
-  */
+    private static String fileToRead = "/var/tmp/rawindex.txt";
+  
   /******************************************************************/
 
     /*****************  To run on Local Computer **********************/
-    private static File a_index = new File("Index_A");
+   /* private static File a_index = new File("Index_A");
     private static String index_P = "Index_P"; 
     private static File i_index_file = new File("Index_I");
     private static String fileToRead = "rawindex.txt";
-
+  */
   /******************************************************************/
 
 
@@ -46,37 +46,18 @@ public class Konstruktion2
       a_word = tre_alfabetCombo;
     }
 
-    
-/*
-    if(lengthOfWord < 3)
-    {
-      StringBuilder sb = new StringBuilder();
-      sb.append(tre_alfabetCombo);
-      for(int i = 3 - lengthOfWord; i <= 3; i++)
-      {
-        sb.append(" ");
-      }
-
-      a_word = sb.toString();
-    }
-    else
-    {
-      a_word = tre_alfabetCombo.substring(0, 3);
-    }
-*/
-
     char[] toHash;
     toHash = a_word.toCharArray();
     int hashval = 0;
 
-    // Hash funktionen nu
+    // Hash funktionen
     for (int i = 0; i < toHash.length; i++) 
     {
-      if ((int)toHash[i] == 229) // å in Ascii
+      if ((int)toHash[i] == 228) // å in Ascii (actually 229)
       {
         hashval += 27 * Math.pow(30, 2 - i);
       }
-      else if ((int)toHash[i] == 228) // ä in Ascii
+      else if ((int)toHash[i] == 229) // ä in Ascii (actually 228)
       {
         hashval += 28 * Math.pow(30, 2 - i);
       }
