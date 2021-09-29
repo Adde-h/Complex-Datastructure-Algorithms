@@ -4,10 +4,9 @@
 /* Ursprunglig författare: Viggo Kann KTH viggo@nada.kth.se      */
 import java.util.LinkedList;
 import java.util.List;
-import java.utils.Arrays;
 
-public class ClosestWords {
-  LinkedList<String> closestWords = null;
+public class TestPrintMatrix {
+  LinkedList<String> testPrintMatrix = null;
 
   int closestDistance = -1;
   public static int loop = 1;
@@ -38,16 +37,16 @@ public class ClosestWords {
     return partDist(w1, w2, w1.length(), w2.length());
   }
 
-  ClosestWords(String w, List<String> wordList) {
+  TestPrintMatrix(String w, List<String> wordList) {
     for (String s : wordList) {
       int dist = distance(w, s);
       // System.out.println("d(" + w + "," + s + ")=" + dist);
       if (dist < closestDistance || closestDistance == -1) {
         closestDistance = dist;
-        closestWords = new LinkedList<String>();
-        closestWords.add(s);
+        testPrintMatrix = new LinkedList<String>();
+        testPrintMatrix.add(s);
       } else if (dist == closestDistance)
-        closestWords.add(s);
+        testPrintMatrix.add(s);
     }
   }
 
@@ -56,7 +55,7 @@ public class ClosestWords {
   }
 
   List<String> getClosestWords() {
-    return closestWords;
+    return testPrintMatrix;
   }
 
   public static void main(String[] args) {
