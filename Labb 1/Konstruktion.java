@@ -14,6 +14,9 @@ import java.io.IOException;
     Rakin Ali CINTE19, KTH
     Adeel Hussain CINTE19, KTH
     Påbörjad 2021-09-11
+
+    CODE REDONE IN "KonkordansAR" & "Konstruktion2"
+    THIS CODE IS NOT FULLY FUNCTIONAL
 */
 
 

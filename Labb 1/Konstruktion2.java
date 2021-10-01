@@ -117,7 +117,7 @@ public class Konstruktion2
         // Write to Index A if hashval is distict from previous
         if(hasher(wordPrev) != hasher(currentWord))
         {
-          // HÄR STANNADE VI AVVVVVV
+          
           aWriter.seek(hasher(wordPrev));
           aWriter.writeInt(i_position);
           
@@ -141,7 +141,7 @@ public class Konstruktion2
         freq++;
       }
     }
-    // Edgee case -> Last word. Add in manually 
+    // Edge case -> Last word. Add in manually 
     if(!textReader.ready())
     {
       freq++;

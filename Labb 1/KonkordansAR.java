@@ -112,24 +112,24 @@ public class KonkordansAR
     iReader.seek(i);      
     
     while (true) 
+    {
+      fromIndexI = iReader.readLine().split(" ");
+      // Ordet finns 
+      if(fromIndexI[0].compareTo(wordLook) == 0)
       {
-        fromIndexI = iReader.readLine().split(" ");
-        // Ordet finns 
-        if(fromIndexI[0].compareTo(wordLook) == 0)
-        {
-          iReader.close();
-          aReader.close();
-          return fromIndexI;
-        }
-        else if(fromIndexI[0].compareTo(wordLook) > 0)
-        {
-          System.out.println("Word is not in the file, Null returned");
-          System.exit(1);
-          iReader.close();
-          aReader.close();
-          return null;
-        }
+        iReader.close();
+        aReader.close();
+        return fromIndexI;
       }
+      else if(fromIndexI[0].compareTo(wordLook) > 0)
+      {
+        System.out.println("Word is not in the file, Null returned");
+        System.exit(1);
+        iReader.close();
+        aReader.close();
+        return null;
+      }
+    }
   }
 
   private static String printer (String wordlook) throws IOException
