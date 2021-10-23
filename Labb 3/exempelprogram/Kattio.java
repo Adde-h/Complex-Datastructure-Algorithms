@@ -36,12 +36,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.OutputStream;
 
-public class Kattio extends PrintWriter {
+public class Kattio extends PrintWriter 
+{
     public Kattio(InputStream i) {
 	super(new BufferedOutputStream(System.out));
 	r = new BufferedReader(new InputStreamReader(i));
     }
-    public Kattio(InputStream i, OutputStream o) {
+    public Kattio(InputStream i, OutputStream o) 
+    {
 	super(new BufferedOutputStream(o));
 	r = new BufferedReader(new InputStreamReader(i));
     }
@@ -65,8 +67,6 @@ public class Kattio extends PrintWriter {
     public String getWord() {
 	return nextToken();
     }
-
-
 
     private BufferedReader r;
     private String line;
