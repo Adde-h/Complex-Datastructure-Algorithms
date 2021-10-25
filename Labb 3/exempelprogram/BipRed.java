@@ -42,12 +42,12 @@ public class BipRed
 		System.err.println("Skickade iväg flödesgrafen");
 	}
 
-	/* Skapa eget */
 
 	void readMaxFlowSolution() {
 		// Läs in antal hörn, kanter, källa, sänka, och totalt flöde
 		// (Antal hörn, källa och sänka borde vara samma som vi i grafen vi
 		// skickade iväg)
+
 		int v = io.getInt();
 		int s = io.getInt();
 		int t = io.getInt();
@@ -59,6 +59,7 @@ public class BipRed
 			int a = io.getInt();
 			int b = io.getInt();
 			int f = io.getInt();
+
 		}
 	}
 
