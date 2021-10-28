@@ -1,3 +1,11 @@
+/*
+* Adeel Hussain & Rakin Ali
+* Generated: 2021-10-24, Updated: 2021-10-25
+* Input: 
+* Dependencies: Kattio.java
+* Reference: https://kth.instructure.com/courses/27078/assignments/167028
+*/
+
 import java.io.IOException;
 
 public class reduceToFlow
