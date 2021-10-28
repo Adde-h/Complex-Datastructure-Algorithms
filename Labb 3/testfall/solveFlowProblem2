@@ -1,0 +1,158 @@
+import java.util.ArrayList;
+
+public class solveFlowProblem2 
+{
+  Kattio io;
+  int nodes, s, t, edges, x, y, capacity, totFlow; 
+  Edge a, b;
+  Node[] graph;
+
+  // Här görs allt
+  solveFlowProblem2()
+  {
+    // Brings the input
+    io = new Kattio(System.in, System.out);
+    
+    // Reads the input and builds the graph 
+    readInput();
+    totFlow = edmondsKarp();
+    writeTotFlow();
+    
+  }
+
+  void readInput()
+  {
+    nodes = io.getInt();
+		s = io.getInt();
+		t = io.getInt();
+		edges = io.getInt();
+    
+    graph = new Node[nodes];
+
+    // Initialize each node, creating a linked list inside each cell
+    for (int i = 0; i < nodes; i++)
+    {
+      graph[i] = new Node();
+    }
+
+    for(int i = 0; i < edges; i++)
+    {
+      x = io.getInt();
+      y = io.getInt();
+		  capacity = io.getInt();
+
+      a = new Edge(x, y, 0, capacity);
+      b = new Edge(y, x, 0, 0);
+
+      a.setReverse(b);
+      b.setReverse(a);
+
+      graph[x].edges.add(a);
+      graph[y].edges.add(b);
+    } 
+  }
+
+  int edmondsKarp()
+  {
+    int maxFlow = 0;
+    
+    while (true)
+    {
+      // Stores edge used to get to node i 
+      Edge[] toEdge = new Edge[nodes];
+      
+      ArrayList<Node> q = new ArrayList<>();
+      q.add(graph[s]);
+
+
+      //BFS körs. Medans vi har en stig från s till t 
+      while(!q.isEmpty())
+      {
+        Node currentNode = q.remove(0);
+
+        for (Edge e : currentNode.edges) 
+        {
+          // If edge hasn't been visited, doesn't point to source and can send flow
+          if(toEdge[e.v] == null && e.v != s && e.capacity > e.flow)
+          {
+            toEdge[e.v] = e;
+            q.add(graph[e.v]);
+          }
+        }
+      }
+
+      // If there's no path from s to t. Break then return maxFlow
+      if(toEdge[t] == null)
+      {
+        break;
+      }
+
+      int bottleNeck = Integer.MAX_VALUE;
+      // Find bottleNeck value in the path
+      for(Edge e = toEdge[t]; e != null; e = toEdge[e.u])
+      {
+        bottleNeck = Math.min(bottleNeck, e.capacity - e.flow);
+      }
+      // Add flow values, flow comes in reverseved
+      for(Edge e = toEdge[t]; e != null; e = toEdge[e.u])
+      {
+        e.flow += bottleNeck;
+        e.reverse.flow -= bottleNeck;
+      }
+
+      maxFlow += bottleNeck;
+    }
+
+    return maxFlow;
+  }
+
+  void writeTotFlow()
+  {
+
+    io.println(nodes);
+    io.println(s + " " + t + " " + totFlow);
+    io.println(edges);
+
+    for (int index = 0; index < edges; index++) 
+    {
+      
+    }
+
+  }
+
+  
+  public static void main(String[] args) 
+  {
+    solveFlowProblem2();
+  }
+
+
+}
+
+
+
+class Node
+{
+  ArrayList<Edge> edges = new ArrayList<>();
+}
+
+class Edge
+{
+  int u, v, flow, capacity;
+  Edge reverse;
+
+  public Edge(int u, int v, int flow, int capacity)
+  {
+    this.u = u;
+    this.v = v;
+    this.flow = flow;
+    this.capacity = capacity;
+  }
+
+  public void setReverse(Edge e)
+  {
+    reverse = e;
+  }
+}
+
+
