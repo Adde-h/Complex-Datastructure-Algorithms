@@ -113,19 +113,27 @@ public class solveFP
 
     io.println(nodes);
     io.println((s+1) + " " + (t+1) + " " + totFlow);
-    io.println(edges);
 
+    StringBuilder sb = new StringBuilder();
+
+    int count = 0;
     for (int i = 0; i < nodes; i++) 
     {
       for (Edge e : graph[i].edges) 
       {
-        if(e.capacity > 0)
+        if(e.flow > 0)
         {
-          io.println((i+1) + " " + (e.y+1) + " " + e.flow);
+          count++;
+          sb.append((i+1) + " " + (e.y+1) + " " + e.flow);
+          sb.append("\n");
         }
       }
     }
+
+    io.println(count);
+    io.println(sb.toString());
   }
+
   
   public static void main(String[] args) 
   {
