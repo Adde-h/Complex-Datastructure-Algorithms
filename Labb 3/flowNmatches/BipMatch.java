@@ -5,8 +5,6 @@ public class BipMatch
 {
   Kattio io = new Kattio(System.in, System.out);
   int e;
-	int graphX[];
-	int graphY[];
 	int nodes, s, t, edges, x, y, capacity, totFlow; 
   Edge edgeX, edgeY;
   Node[] graph;
@@ -15,16 +13,10 @@ public class BipMatch
   // Step 3 of lab 3 
 	BipMatch() throws IOException
 	{
-		// Convert it to a flow graph
-		String flowGraph = readWriteBipartiteGraph();
-		// Create flow Graph  
-		readInput(flowGraph);
-		// Edmond Karp nu 
+		// Reads the bipartite graph input and creates a flowgrpah 9
+		readInput(readWriteBipartiteGraph()); 
 		totFlow = edmondsKarp();
-		// Write totFlow and the updated flowGraph 
-		String updateFlow = writeTotFlow();
-		// Cut out S and T, print out the graph to STDIO
-		readWriteMaxFlowSolution(updateFlow);
+		readWriteMaxFlowSolution(writeTotFlow());
 
 		io.close();
 	}
@@ -43,8 +35,6 @@ public class BipMatch
     flowGraph.append(s + " " + t + "\n");
     flowGraph.append(edges + "\n");
 
-		graphX = new int[e];
-		graphY = new int[e];
 		// Koppla S till X
 		for(int i = 2; i < x+2; i++) 
 		{
@@ -56,11 +46,11 @@ public class BipMatch
 		{
 			int a = io.getInt();
 			int b = io.getInt();
-			graphX[i] = a+1;
-			graphY[i] = b+1;
-			flowGraph.append(graphX[i] + " " + graphY[i] + " " + capacity + "\n");
+			flowGraph.append((a+1) + " " + (b+1) + " " + capacity + "\n");
+
 		}
 		
+		// Koppla Y till T
 		for (int i = x+2; i < t; i++) 
 		{
 			flowGraph.append(i + " " + t + " " + capacity + "\n");
