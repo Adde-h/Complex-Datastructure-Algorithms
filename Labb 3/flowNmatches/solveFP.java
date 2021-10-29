@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class solveFP 
+public class SolveFP 
 {
   Kattio io;
   int nodes, s, t, edges, x, y, capacity, totFlow; 
@@ -8,7 +8,7 @@ public class solveFP
   Node[] graph;
 
   // Här görs allt
-  solveFP()
+  SolveFP()
   {
     // Brings the input
     io = new Kattio(System.in, System.out);
@@ -137,7 +137,7 @@ public class solveFP
   
   public static void main(String[] args) 
   {
-    new solveFP();
+    new SolveFP();
   }
 
 }

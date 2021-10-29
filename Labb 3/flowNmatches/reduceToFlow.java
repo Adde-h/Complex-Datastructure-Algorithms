@@ -8,7 +8,7 @@
 
 import java.io.IOException;
 
-public class reduceToFlow
+public class ReduceToFlow
 {
 	Kattio io;
   int x;
@@ -19,7 +19,7 @@ public class reduceToFlow
 	int graphY[];
 
 	// Här görs allt -> Konstruktör
-	reduceToFlow() throws IOException
+	ReduceToFlow() throws IOException
 	{
     io = new Kattio(System.in, System.out);
 	  readBipartiteGraph();
@@ -109,7 +109,7 @@ public class reduceToFlow
 
 	public static void main(String[] args) throws Exception
 	{
-		new reduceToFlow();
+		new ReduceToFlow();
 	}
 
 }
