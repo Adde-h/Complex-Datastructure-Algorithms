@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class BipMatch 
 {
@@ -11,7 +11,7 @@ public class BipMatch
 
 	// Step 3 of lab 3
 	BipMatch() throws IOException 
-  {
+	{
 		// Reads the bipartite graph input and creates a flowgraph
 		readWriteBipartiteGraph();
 		totFlow = edmondsKarp();
@@ -21,7 +21,8 @@ public class BipMatch
 	}
 
 	// Reads input and creates a flowgraph at the same time.
-	void readWriteBipartiteGraph() {
+	void readWriteBipartiteGraph() 
+	{
 		// Läs antal hörn och kanter
 		x = io.getInt();
 		y = io.getInt();
@@ -30,7 +31,7 @@ public class BipMatch
 		nodes = (x + y + 2);
 		edges = (e + x + y);
 		s = 0;
-		t = nodes-1;
+		t = nodes - 1;
 		capacity = 1;
 
 		graph = new Node[nodes];
@@ -85,15 +86,17 @@ public class BipMatch
 		}
 
 	}
+
 	int edmondsKarp() 
-  {
+	{
 		int maxFlow = 0;
 
-		while (true) {
+		while (true) 
+		{
 			// Stores edge used to get to node i
 			Edge[] toEdge = new Edge[nodes];
 
-			ArrayList<Node> queue = new ArrayList<>();
+			LinkedList<Node> queue = new LinkedList<>();
 			queue.add(graph[s]);
 
 			// BFS körs. Medans vi har en stig från s till t
@@ -104,7 +107,8 @@ public class BipMatch
 				for (Edge e : currentNode.edges) 
 				{
 					// If edge hasn't been visited, doesn't point to source and can send flow
-					if (toEdge[e.y] == null && e.y != s && e.capacity > e.flow) {
+					if (toEdge[e.y] == null && e.y != s && e.capacity > e.flow) 
+					{
 						toEdge[e.y] = e;
 						queue.add(graph[e.y]);
 					}
@@ -112,19 +116,22 @@ public class BipMatch
 			}
 
 			// If there's no path from s to t. Break then return maxFlow
-			if (toEdge[t] == null) {
+			if (toEdge[t] == null) 
+			{
 				break;
 			}
 
 			int bottleNeck = Integer.MAX_VALUE;
 
 			// Find bottleNeck value in the path
-			for (Edge e = toEdge[t]; e != null; e = toEdge[e.x]) {
+			for (Edge e = toEdge[t]; e != null; e = toEdge[e.x]) 
+			{
 				bottleNeck = Math.min(bottleNeck, e.capacity - e.flow);
 			}
 
 			// Add flow values, flow comes in reverseved
-			for (Edge e = toEdge[t]; e != null; e = toEdge[e.x]) {
+			for (Edge e = toEdge[t]; e != null; e = toEdge[e.x]) 
+			{
 				e.flow += bottleNeck;
 				e.reverse.flow -= bottleNeck;
 			}
@@ -139,10 +146,12 @@ public class BipMatch
 		io.println(x + " " + y);
 		io.println(totFlow);
 
-		for (int i = 0; i < nodes; i++) 
-    {
-			for (Edge e : graph[i].edges) {
-				if (e.flow > 0 && e.x != s && e.y != t) {
+		for (int i = 1; i < x + 1; i++) 
+		{
+			for (Edge e : graph[i].edges) 
+			{
+				if (e.flow > 0 && e.x != s && e.y != t) 
+				{
 					io.println((e.x) + " " + (e.y));
 				}
 			}
