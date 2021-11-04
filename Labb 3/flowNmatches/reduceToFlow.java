@@ -22,10 +22,10 @@ public class ReduceToFlow
 	ReduceToFlow() throws IOException
 	{
     io = new Kattio(System.in, System.out);
-	  readBipartiteGraph();
-    writeFlowGraph();
-    readWriteMaxFlowSolution();
-    io.close();
+		readBipartiteGraph();
+		writeFlowGraph();
+		readWriteMaxFlowSolution();
+		io.close();
 	}
 
   // Reads a file 
@@ -48,7 +48,7 @@ public class ReduceToFlow
 	}
 
 
-  //Här skriver vi till ut till en fil. 
+  //Här skriver vi 
   void writeFlowGraph()
   {
     int nodes = (x+y+2), edges = (e+x+y), s = 1, t = nodes;

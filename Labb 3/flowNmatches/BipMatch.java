@@ -3,9 +3,9 @@ import java.util.LinkedList;
 
 public class BipMatch 
 {
+	//Class attributes
 	Kattio io = new Kattio(System.in, System.out);
-	int e;
-	int nodes, s, t, edges, x, y, capacity, totFlow;
+	int e, nodes, s, t, edges, x, y, capacity, totFlow;
 	Edge edgeX, edgeY;
 	Node[] graph;
 
@@ -14,7 +14,9 @@ public class BipMatch
 	{
 		// Reads the bipartite graph input and creates a flowgraph
 		readWriteBipartiteGraph();
+		// Adds the total flow to global Variable
 		totFlow = edmondsKarp();
+		// Outputs the graph, Deletes the edges that contains s and t 
 		writeTotFlow();
 
 		io.close();
@@ -23,17 +25,17 @@ public class BipMatch
 	// Reads input and creates a flowgraph at the same time.
 	void readWriteBipartiteGraph() 
 	{
-		// Läs antal hörn och kanter
+		// Reads total notes from X and Y side and total edges between
 		x = io.getInt();
 		y = io.getInt();
 		e = io.getInt();
 
+		// We're going to add S and T nodes and connect them to the bipartite graph
 		nodes = (x + y + 2);
 		edges = (e + x + y);
 		s = 0;
 		t = nodes - 1;
 		capacity = 1;
-
 		graph = new Node[nodes];
 
 		// Initialize each node, creating a linked list inside each cell
@@ -42,20 +44,23 @@ public class BipMatch
 			graph[i] = new Node();
 		}
 
-		// Koppla S till X
+		// Connect Sink to X and vice versa
 		for (int i = 1; i < x + 1; i++) 
 		{
+			// Create the edges
 			edgeX = new Edge(s, i, 0, capacity);
 			edgeY = new Edge(i, s, 0, 0);
-
+			
+			// Fix their reverse pointers
 			edgeX.setReverse(edgeY);
 			edgeY.setReverse(edgeX);
 
+			// Now add them to the graph. 
 			graph[s].edges.add(edgeX);
 			graph[i].edges.add(edgeY);
 		}
 
-		// Läs in kanterna
+		// Connect X to Y and vice versa
 		for (int i = 0; i < e; i++) 
 		{
 			int a = io.getInt();
@@ -71,7 +76,7 @@ public class BipMatch
 			graph[b].edges.add(edgeY);
 		}
 
-		// Koppla Y till T
+		// Connect Y to T and vice versa
 		for (int i = x + 1; i < t; i++) 
 		{
 			edgeX = new Edge(i, t, 0, capacity);
@@ -86,7 +91,16 @@ public class BipMatch
 		}
 
 	}
-
+	/*
+	Edmondkarp algorithm. 
+		Do BFS to find path from S till T. then
+			Extract bottleneck capacity from the path
+				for each Node in the path 
+					Capacity = Capacity - BottleNeck
+					Flow = flow + bottlneck 
+			maxflow = maxflow + bottleneck
+		return bottleneck 
+	*/
 	int edmondsKarp() 
 	{
 		int maxFlow = 0;
@@ -95,15 +109,18 @@ public class BipMatch
 		{
 			// Stores edge used to get to node i
 			Edge[] toEdge = new Edge[nodes];
-
+			
+			// Queue implementation using a linkedList
 			LinkedList<Node> queue = new LinkedList<>();
 			queue.add(graph[s]);
 
-			// BFS körs. Medans vi har en stig från s till t
+			// Queue cannot be empty. If empty no neighbours
 			while (!queue.isEmpty()) 
 			{
+				// Take out first element in queue
 				Node currentNode = queue.remove(0);
 
+				// Check each neighbour from the node
 				for (Edge e : currentNode.edges) 
 				{
 					// If edge hasn't been visited, doesn't point to source and can send flow
@@ -137,7 +154,6 @@ public class BipMatch
 			}
 			maxFlow += bottleNeck;
 		}
-
 		return maxFlow;
 	}
 
@@ -150,6 +166,7 @@ public class BipMatch
 		{
 			for (Edge e : graph[i].edges) 
 			{
+				// Print what the edges connects to, 
 				if (e.flow > 0 && e.x != s && e.y != t) 
 				{
 					io.println((e.x) + " " + (e.y));

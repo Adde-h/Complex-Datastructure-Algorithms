@@ -10,7 +10,7 @@
 public class BipRed 
 {
 	Kattio io;
-
+  // Läser in-datan och skapar grafen direkt 
 	void readBipartiteGraph() {
 		// Läs antal hörn och kanter
 		int x = io.getInt();
