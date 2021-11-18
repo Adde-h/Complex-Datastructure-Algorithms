@@ -4,17 +4,6 @@ public class Reduce
 	// Global variables 
 	static int v, e, colours, actors, roles, scenes; 
  	static Kattio io = new Kattio(System.in, System.out);
-
-	/*ANTECKNINGAR FÖR OSS SJÄLVA
-	Noder -> Roller
-	Kanter -> Scener
-	Skådespelare -> M, antalet färger 
-	*/ 
-
-	/*
-
-	*/
-
 	public static void main(String[] args) 
 	{
 		// Get the in-data
@@ -22,9 +11,7 @@ public class Reduce
 		e = io.getInt(); 					// Number of edges (scenes)
 		colours = io.getInt(); 		// Number of colours (actors)
 
-		/*If nodes less than total nodes => Always Yes - instance -> Minimal rollbestäning
-			problem
-		*/ 
+		/* If nodes less than or equal to total nodes => Always Yes - instance -> Minimal rolecrew problem */ 
 		if(v <= colours)
 		{
 			io.println("3\n2\n3");
@@ -33,17 +20,17 @@ public class Reduce
 		}
 		else
 		{
-		/*
+			/*
 			* Minimum required production to solve roleproblem is:
 			* 3 roles
 			* 3 actors
 			* 2 scenes
-		*/
+			*/
 
 			// Convert to coloring problem
-			roles = v + 3;					//Minimum number of roles needed is 3, minimum v is 1
+			roles = v + 3;							//Minimum number of roles needed is 3, minimum v is 1
 			scenes = e + v + 2;					//Minimum number of scenes needed is 2, minimum e is 0
-			actors = colours + 3;		//Minimum number of actors needed is 3, minimum colors is 1
+			actors = colours + 3;				//Minimum number of actors needed is 3, minimum colors is 1
 			io.println(roles + "\n" + scenes + "\n" + actors);
 			
 			for(int i = 4; i <= roles; i++)
