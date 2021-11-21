@@ -16,11 +16,8 @@
 	Noder = Roler
 	Edges = Scener
 	Färger = Skådespelare
-	
-	
 
 */ 
-
 
 public class Reduce
 {
@@ -34,7 +31,7 @@ public class Reduce
 		e = io.getInt(); 					// Number of edges (scenes)
 		colours = io.getInt(); 		// Number of colours (actors)
 
-		/* If nodes less than or equal to total nodes => Always Yes - instance -> Minimal rolecrew problem */ 
+		/* If nodes less than or equal to total colors => Always Yes - instance -> Minimal rolecrew problem */ 
 		if(v <= colours)
 		{
 			io.println("3\n2\n3");
@@ -54,7 +51,7 @@ public class Reduce
 			roles = v + 2;									//Minimum number of roles needed is 3, minimum v is 1
 			scenes = e + v + 1;							//Minimum number of scenes needed is 2, minimum e is 0
 			actors = colours + 2;						//Minimum number of actors needed is 3, minimum colors is 1
-			io.println(roles + "\n" + scenes + "\n" + actors);
+			io.println(roles + "\n" + scenes + "\n" + actors); // First row
 			
 			// All original actors can play all original roles (except for actor 1 and 2)
 			for(int i = 0; i < v; i++)
@@ -70,11 +67,13 @@ public class Reduce
 			// Insert last two actors to last two roles
 			io.println("1 1\n1 2");
 
-			// Have scenes with all roles and last role (scene with all actors and actor 2 except actor 1)
+			// Have scenes with all roles together/connected with last role (scene with all actors connected/togeter with actor 2, except actor 1)
 			for(int i = 1; i < roles-1; i++)
 			{
 				io.println(2 + " " + i + " " + roles);
 			}
+
+			//Actor 1 plays in the same scene as role 1
 			io.println("2 " + (roles-1) + " 1");
 			
 			//Read remaining scenes from original production and print them out
