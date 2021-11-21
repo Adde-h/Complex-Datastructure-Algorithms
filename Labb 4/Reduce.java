@@ -49,7 +49,7 @@ public class Reduce
 
 			// Convert to coloring problem
 			roles = v + 2;									//Minimum number of roles needed is 3, minimum v is 1
-			scenes = e + v + 1;							//Minimum number of scenes needed is 2, minimum e is 0
+			scenes = e + v + 1;							//We connect role 2 with all other original roles(hence + v), and role 1 to connect with 1 of the original roles (hence + 1)
 			actors = colours + 2;						//Minimum number of actors needed is 3, minimum colors is 1
 			io.println(roles + "\n" + scenes + "\n" + actors); // First row
 			
