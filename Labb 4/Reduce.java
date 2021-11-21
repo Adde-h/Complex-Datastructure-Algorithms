@@ -1,4 +1,27 @@
-/*This class reduces graph-coloring problem to "Roll-besättningsproblemet" */
+/*
+	Reduktion från Graf-färgning från till Rollbesttäning     
+	1) Samma person kan spela flera roller men samma roll kan innehas av en person
+		-> Samma färg till olika noder men samma nod kan enast innhas av en färg
+
+	2)Inga monologer
+		-> Alla noder måste ha en kant, inga kanter som börjar och slutar på samma nod, dvs öglor
+	
+	3) Varje roll förekommer i minst scen 
+		-> Alla noder ska ha en kant
+	
+	4) P1 och P2 ska få minst en roll och inte spela mot varandra
+		-> Minst två noder ska vara med och de ska inte kopplas till varandra -> Låt de ha samma färg 
+	
+	--> Indata-Format
+	Noder = Roler
+	Edges = Scener
+	Färger = Skådespelare
+	
+	
+
+*/ 
+
+
 public class Reduce
 {
 	// Global variables 
@@ -23,33 +46,38 @@ public class Reduce
 			/*
 			* Minimum required production to solve roleproblem is:
 			* 3 roles
-			* 3 actors
 			* 2 scenes
+			* 3 actors
 			*/
 
 			// Convert to coloring problem
-			roles = v + 3;							//Minimum number of roles needed is 3, minimum v is 1
-			scenes = e + v + 2;					//Minimum number of scenes needed is 2, minimum e is 0
-			actors = colours + 3;				//Minimum number of actors needed is 3, minimum colors is 1
+			roles = v + 2;									//Minimum number of roles needed is 3, minimum v is 1
+			scenes = e + v + 1;							//Minimum number of scenes needed is 2, minimum e is 0
+			actors = colours + 2;						//Minimum number of actors needed is 3, minimum colors is 1
 			io.println(roles + "\n" + scenes + "\n" + actors);
 			
-			for(int i = 4; i <= roles; i++)
+			// All original actors can play all original roles (except for actor 1 and 2)
+			for(int i = 0; i < v; i++)
 			{
 				io.print(colours + " ");
-				for(int j = 0; j < colours; j++)
+				for(int j = 3; j <= actors; j++)
 				{
-					io.print((4 + j) + " ");
+					io.print(j + " ");
 				}
 				io.println("");
 			}
 
-			io.println("1 1\n1 2\n1 3");
+			// Insert last two actors to last two roles
+			io.println("1 1\n1 2");
 
-			for(int i = 1; i < roles; i++)
+			// Have scenes with all roles and last role (scene with all actors and actor 2 except actor 1)
+			for(int i = 1; i < roles-1; i++)
 			{
 				io.println(2 + " " + i + " " + roles);
 			}
+			io.println("2 " + (roles-1) + " 1");
 			
+			//Read remaining scenes from original production and print them out
 			int a, b;
 			for(int i = 0; i < e; i++)
 			{
