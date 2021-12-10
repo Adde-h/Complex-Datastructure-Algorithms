@@ -75,6 +75,7 @@ public class CastingHeuristic
 
 	/**
 	* Function to check if the actor can play the role so it doesn't end up in a scene with itself 
+	* also check if the role is not in the same scene for the other diva incase actor is 1 or 2 
 	*/
 	static boolean actorsSeperate(int actor, int role) {
 		if (actor == 1 || actor == 2) 
