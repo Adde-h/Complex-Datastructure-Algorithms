@@ -1,0 +1,31 @@
+Uppgift 1
+Hur formuleras rekursionen för PartDist matematiskt? (Visa i dina lösningar!)
+
+Uppgift 2
+Vad anger talet som partDist(w1,w2,x,y)beräknar? (Svara med ord!)
+Svar: Editeringsavståndet mellan dom x första bokstäverna i w1 och dom y första i w2. Alternativt svar: Minsta antalet editeringsoperationer som krävs för att omvandla dom x
+första bokstäverna i w1 till dom y y första i w2.
+
+Uppgift 3
+Vad blir partDist("la","bl",x,y) för alla x och y mellan 0 och 2? (Svara med en matris!)
+Svar:
+0 1 2 
+1 1 2 
+2 1 2 
+
+Uppgift 4
+Beskriv en beräkningsordning för dynprogmatrisen M som gör att alla delproblem som anropas i högerledet av rekursionen redan är lösta.
+Svar: Här är tre alternativa beräkningsordningar som alla fungerar:
+1. Radvis uppifrån och ned. Gå från vänster till höger på varje rad.
+2. Kolumnvis från vänster till höger. Gå uppifrån och ned i varje kolumn.
+3. Börja längst upp till vänster och gå diagonalvis (dvs i + j är konstant).
+
+Uppgift 5 (besvaras av dig)
+Vad är tidskomplexiteten för en algoritm som bestämmer editeringsavståndet mellan ett n-bokstavsord och ett m-bokstavsord med dynamisk programmering?
+Svar: O(m*n)
+
+Uppgift 6 (ställs av dig)
+Anta att orden Y och Z har samma första p bokstäver. Vilken del av dynprogmatriserna för Y−X och Z−X vet vi är likadan?
+Svar: Hela rad 0 till p (alternativt rad 1 till p+1 om första raden numreras 1) är lika.
+
+

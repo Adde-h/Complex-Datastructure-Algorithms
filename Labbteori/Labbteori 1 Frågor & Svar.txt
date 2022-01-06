@@ -1,0 +1,33 @@
+Uppgift 1 
+En roll vid parprogrammering heter förare. Vad har den rollen för uppgift?
+
+
+Uppgift 2 
+Vilken är den andra rollen vid parprogrammering och vad har den för uppgift?
+Svar: Navigatör. Navigatören granskar varje kodrad när den matas in och planerar vad som ska göras framöver.
+
+
+Uppgift 3 
+Indexinformationen för ett ord (det vill säga i vilka teckenpositioner ordet förekommer i den stora texten) kan bli mycket stor. 
+Bör positionerna lagras som text eller binärt?
+
+
+Uppgift 4 
+Bör indexinformationen (det vill säga i vilka teckenpositioner ordet förekommer i den stora texten) lagras tillsammans med själva ordet eller på ett separat ställe?
+Svar: Eftersom det kan finnas väldigt många förekomster av ord så snabbas ordsökningen upp om pekarna till korpusen lagras i en separat fil. (Under sökningen i indexet vill man inte behöva läsa förbi stora mängder av data för att hitta nästa indexord.)
+
+
+Uppgift 5
+Hur många filpositioneringar krävs för en sökning om indexet till konkordansen implementeras som ett binärt sökträd på fil? 
+Tala speciellt om hur pekarna lagras på filen.
+
+Svar: En pekare till en nod i trädet implementeras som en teckenposition i filen som binära sökträdet lagras på. 
+Pekare lagras alltså som tal (antingen binärt eller som text). 
+För att följa en pekare ska man alltså göra en filpositionering följt av en filläsning. 
+Vid sökning i ett balanserat binärt sökträd krävs att man följer log n pekare, det vill säga log n filpositioneringar, där n är antalet olika ord.
+
+
+Uppgift 6
+Orden a och öööh är bra ord att testa sitt program med. Motivera varför!
+Svar: Det är bra att testa ytterlighetsfall. a och öööh är första respektive sista ordet i indexet.
+

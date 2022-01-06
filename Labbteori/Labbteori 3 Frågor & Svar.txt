@@ -1,0 +1,24 @@
+Uppgift 1
+Vad är tidskomplexiteten för algoritmen för hela matchningsproblemet om grafen implementeras som en grannmatris? Uttryck tidskomplexiteten i n och m där n är totala antalet hörn och m antalet kanter i den bipartita grafen.
+Svar: Flödesgrafen kommer att innehålla n+2 = O(n) hörn och m + n = O(m) kanter. Lemmat på föreläsning 13 säger att algoritmen tar högst O(nm) varv. Det går bra att hänvisa lemmat, men ännu bättre är att säga att flödet är högst O(n), så det kan högst bli O(n) varv (eftersom flödet ökar med 1 varje varv). Att hitta en stig tar O(n2) med grannmatris eftersom hela matrisen måste gås igenom. Att uppdatera kanterna längs stigen tar O(n) (mindre än tiden för att hitta stigen). Totalt blir därför flödet O(n3) (O(n3m) om lemmat används).
+
+
+Uppgift 2 
+Vad är tidskomplexiteten (uttryckt i n och m) för algoritmen för hela matchningsproblemet om grafen implementeras med grannlistor? Ger grannmatris eller grannlistor bästa tidskomplexiteten då m=O(n), alltså då grafen är gles?
+Svar: Att hitta och uppdatera en stig i restflödesgrafen tar O(m) med grannlistor. Totalt blir därför tiden O(nm) (O(nm2) om lemmat på föreläsning 13 används).
+Bästa tidskomplexiteten då grafen är gles fås för grannlistor (O(n2) istället förO(n3)).
+
+
+Uppgift 3
+Varför har stigarna som breddenförstsökningen hittar i restflödesgrafen inte nödvändigtvis längd 3?
+Svar: I restflödesgrafen kommer det under algoritmens gång att uppstå bakåtkanter, alltså kanter från Y-hörn till X-hörn, varför en stig kan gå fram och tillbaka mellan X-hörn och Y-hörn flera gånger innan den kommer fram till sänkan.
+
+
+Uppgift 4
+Säg att den bipartita grafen har a hörn i X och b hörn i Y . Hur lång kan en stig i restflödesgrafen bli som längst (uttryckt i a och b)?
+Svar: Varje stig från källan till sänkan måste passera lika många X-hörn som Y-hörn. Längsta tänkbara stigen passerar alla hörn på den sida som har minst hörn. Den innehåller då 2+2⋅min(a,b) hörn och består då av 1+2⋅min(a,b) kanter.
+
+
+Uppgift 5
+Bevisa att Ford-Fulkerson alltid genererar heltalsflöden om kantkapaciteterna är heltal!
+Med rätt observation blir beviset mycket enkelt. Försök tillsammans att komma fram till ett så enkelt resonemang (bevis) som möjligt som övertygar er båda.

@@ -1,0 +1,23 @@
+Uppgift 1
+Ge en lösning till ja-instansen av rollbesättningsproblemet som finns som indataexempel.
+Svar: Till exempel kan en lösning vara att roll 1 spelas av p1, roll 2 av p3, roll 3 av p1, roll 4 av p2, roll 5 av p4, roll 6 av p4. För att se om en annan lösning är korrekt får du kolla att den uppfyller villkoren i ja-instansen.
+
+Uppgift 2
+Förändra nej-instansen i exemplet på indata till en ja-instans. Hur många skådespelare behöver du lägga till i just detta fall?
+Svar: Det räcker att lägga till en enda skådespelare (nummer 4) som får spela roll 2 och 4. Lösningen blir då att roll 1 spelas av p1, roll 2 av p4, roll 3 av p3, roll 4 av p4, roll 5 av p2. Kontrollera i kompisens lösning att alla villkor är uppfyllda och att divorna (nr 1 och 2) inte möter varandra i samma scen.
+
+Uppgift 3
+Tänk dig en instans där rollerna är indelade i två grupper, ungefär som i matchningsproblemet, där rollerna aldrig förekommer i samma scener som roller ur samma grupp. Hur många skådespelare behövs då?
+Svar: Om inte villkoret att skådis 1 och 2 inte får mötas fanns skulle det räcka med en skådis som tar hand om ena gruppen och en skådis som tar hand om andra. Nu kan skådis 1 och 2 tillsammans ta hand om ena gruppen (om den består av mer än en roll) och skådis 3 ta hand om andra gruppen. Nu möts inte skådis 1 och 2, och det blir tre skådisar totalt.
+
+Uppgift 4
+Visa att rollbesättningsproblemet ligger i NP: Anta att en ja-instans är given. Vad består en lösning av? Hur verifierar man lösningen och hur lång tid tar det?
+Svar: En lämplig lösning till en ja-instans är en rollbesättning, alltså en lista över vilken skådis som ska spela vilken roll. För att verifiera att detta är en riktig lösning måste man kolla att skådisarna tilldelats roller som dom kan spela, att alla roller är tilldelade, att samma skådis inte spelar flera roller i samma scen och att divorna p1 och p2 är med men inte är med i samma scen. Detta tar bara polynomisk tid.
+
+Uppgift 5
+Vilken är den minsta möjliga produktion som uppfyller indatakraven för rollbesättningsproblemet och som går att sätta upp? Skriv upp indata för denna produktion!
+Svar: Tre roller, tre skådisar och två scener, där roll i spelas av skådis i, där roll 1 och 3 är med i första scenen och där roll 2 och 3 är med i andra scenen.
+
+Uppgift 6
+Anta att film a innehåller en scen med rollerna 4, 7 och 12 medan film b har tre scener med rollerna 4 och 7, 7 och 12 samt 4 och 12. Om alla övriga villkor är identiska mellan filmerna – kommer rollbesättningarna då att bli likadana? Varför/varför inte?
+Svar: Ja, rollbesättningarna blir lika. Båda uppsättningarnas villkor innebär att rollerna 4, 7 och 12 måste spelas av tre olika skådisar och att högst en av dom kan vara någon av p1 och p2.

@@ -1,0 +1,25 @@
+Uppgift 1
+Vad skiljer en heuristik från en approximationsalgoritm?
+Svar: Skillnaden är att en approximationsalgoritm ger lösningar som garanterat är inom en viss faktor från den optimala lösningen. (Den garanterade faktorn kallas approximationskvot.)
+
+Uppgift 2
+Rollbesättningsproblemet i labb 5 är ett minimeringsproblem. Vad är målfunktionen för problemet?
+Svar: Målfunktionen (som ska minimeras) är antalet skådisar som används i rollbesättningen.
+
+Uppgift 3
+Varför behövde superskådisar införas i labb 5?
+Svar: Rollbesättningsproblemet (utan superskådisar) är NP-svårt (se labb 4), så vi kan inte hoppas att vi hittar en polynomisk algoritm som löser problemet med högst k skådespelare. Men genom att lägga till superskådisar kan vi alltid hitta en lösning till varje probleminstans i polynomisk tid, även om lösningen inte lär bli optimal. 
+Och vi vill att heuristiken ska vara polynomisk.
+
+Uppgift 4
+Föreslå en lokal modifiering för rollbesättningsproblemet som skulle kunna användas i en lokal- sökningsalgoritm.
+Svar: En lokal modifiering av en lösning kan se ut på många sätt. Till exempel kan det vara att en rolltilldelning ändras från en skådespelare s1 till en annan s2. Om skådespelare s1 nu inte längre har någon roll och skådespelare s2 har flera roller så minskar antalet använda skådisar med ett. Modifieringen får bara göras om rollbytet är tillåtet (att s2 inte spelar någon annan roll som är med i samma scener och att divakraven och superskådiskraven är uppfyllda).
+
+Uppgift 5
+Hur länge ska man hålla på med att göra upprepade lokala modifieringar vid lokalsökning?
+Svar: När det inte finns någon lokal modifiering som ger bättre eller oförändrat värde på mål- funktionen och som man inte har besökt tidigare under lokalsökningen så måste man sluta. (Det kan också vara bra att ha en övre gräns på antalet gånger som man får modifiera utan att gå till en lösning som har ett strikt bättre värde på målfunktionen. Hur stort detta värde bör bara beror på hur lång tid man kan vänta på algoritmen och hur lång tid en modifiering tar att utföra.)
+
+Uppgift 6
+Vad finns det för fördelar med att införa slump i en heuristik?
+Svar: Om man inför slump (i valet av vilken modifiering som ska genomföras eller i själva modifieringssteget) så blir inte algoritmen deterministisk. Då kan den komma att testa lösningar som inte en deterministisk algoritm hade testat, och man kan köra den flera gånger och få olika bra lösningar för heuristiken (och svara med den bästa).
+
